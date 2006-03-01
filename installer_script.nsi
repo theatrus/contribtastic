@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "EVE-Central.com MarketUploader"
-!define PRODUCT_VERSION "1.1"
+!define PRODUCT_VERSION "1.1.1"
 !define PRODUCT_PUBLISHER "StackWorks Enterprises"
 !define PRODUCT_WEB_SITE "http://eve-central.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\evec_upload.exe"
@@ -61,23 +61,22 @@ ShowUnInstDetails show
 Section "Program Files" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite try
-  File "C:\evec_upload\dist\bz2.pyd"
-  File "C:\evec_upload\dist\evec_upload.exe"
-  File "C:\evec_upload\dist\evec_upload.exe.log"
-  File "C:\evec_upload\dist\library.zip"
-  File "C:\evec_upload\dist\MSVCR71.dll"
-  File "C:\evec_upload\dist\python24.dll"
-  File "C:\evec_upload\dist\unicodedata.pyd"
-  File "C:\evec_upload\dist\w9xpopen.exe"
-  File "C:\evec_upload\dist\wxmsw26uh_vc.dll"
-  File "C:\evec_upload\dist\zlib.pyd"
-  File "C:\evec_upload\dist\_controls_.pyd"
-  File "C:\evec_upload\dist\_core_.pyd"
-  File "C:\evec_upload\dist\_gdi_.pyd"
-  File "C:\evec_upload\dist\_misc_.pyd"
-  File "C:\evec_upload\dist\_socket.pyd"
-  File "C:\evec_upload\dist\_ssl.pyd"
-  File "C:\evec_upload\dist\_windows_.pyd"
+  File "dist\bz2.pyd"
+  File "dist\evec_upload.exe"
+  File "dist\library.zip"
+  File "dist\MSVCR71.dll"
+  File "dist\python24.dll"
+  File "dist\unicodedata.pyd"
+  File "dist\w9xpopen.exe"
+  File "dist\wxmsw26uh_vc.dll"
+  File "dist\zlib.pyd"
+  File "dist\_controls_.pyd"
+  File "dist\_core_.pyd"
+  File "dist\_gdi_.pyd"
+  File "dist\_misc_.pyd"
+  File "dist\_socket.pyd"
+  File "dist\_ssl.pyd"
+  File "dist\_windows_.pyd"
 
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
