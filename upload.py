@@ -28,8 +28,8 @@ import wx.lib.newevent
 from threading import Thread
 
 
-ProgramVersion = 1010
-ProgramVersionNice = "1.1"
+ProgramVersion = 1011
+ProgramVersionNice = "1.1.1"
 CheckVersion = 1000
 
 (UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
@@ -89,9 +89,13 @@ def upload_data(path, win):
         if item[-3:] == "txt" and item != "readme.txt":
             # Found file
             upcount = upcount + 1
-
-            s = item.split(' - ')
-            typename = s[1]
+            typename = None
+            try:
+                s = item.split(' - ')
+                typename = s[1]
+            except:
+                # This isn't a valid item it seems like
+                continue
             
             fileh = open(path+'\\'+item)
             lines = ""
