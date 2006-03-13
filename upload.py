@@ -28,8 +28,8 @@ import wx.lib.newevent
 from threading import Thread
 
 
-ProgramVersion = 1011
-ProgramVersionNice = "1.1.1"
+ProgramVersion = 1020
+ProgramVersionNice = "1.2"
 CheckVersion = 1000
 
 (UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
@@ -37,13 +37,14 @@ CheckVersion = 1000
 
 
 class UploadThread(Thread):
-    def __init__(self, path, win):
+    def __init__(self, path, win, userid):
         Thread.__init__(self)
         self.path = path
         self.win = win
+        self.userid = userid
         self.setDaemon(False)
     def run(self):
-        upload_data(self.path, self.win)
+        upload_data(self.path, self.win,self.userid)
 
 
 class ProtocolVersionMismatch(exceptions.Exception):
@@ -71,7 +72,8 @@ def check_client():
         return True
 
     
-def upload_data(path, win):
+def upload_data(path, win, userid):
+
     dirl = []
     try:
         dirl = os.listdir(path)
@@ -107,7 +109,7 @@ def upload_data(path, win):
 
             fileh.close()
             
-            submitdata = urllib.urlencode({'typename' : typename, 'data' : lines})
+            submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 'userid': userid})
             
             h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
             
