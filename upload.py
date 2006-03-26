@@ -75,6 +75,8 @@ def check_client():
 def upload_data(path, win, userid):
 
     dirl = []
+    upcount = 0
+    
     try:
         dirl = os.listdir(path)
     except:
@@ -83,7 +85,7 @@ def upload_data(path, win, userid):
 
         return None
 
-    upcount = 0
+
 
     
     for item in dirl:
