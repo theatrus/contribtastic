@@ -114,7 +114,12 @@ def upload_data(path, win, userid):
             submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 'userid': userid})
             
             h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
-            
+            kk = h.readlines()
+            for llk in kk:
+                print llk
+                
+                
+                
             h.close()
             evt = UpdateUploadEvent(typename = typename, success = True)
             wx.PostEvent(win, evt)
