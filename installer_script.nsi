@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "EVE-Central.com MarketUploader"
-!define PRODUCT_VERSION "1.2"
+!define PRODUCT_VERSION "1.3"
 !define PRODUCT_PUBLISHER "StackWorks Enterprises"
 !define PRODUCT_WEB_SITE "http://eve-central.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\evec_upload.exe"
@@ -64,19 +64,8 @@ Section "Program Files" SEC01
   File "dist\bz2.pyd"
   File "dist\evec_upload.exe"
   File "dist\library.zip"
-  File "dist\MSVCR71.dll"
-  File "dist\python24.dll"
-  File "dist\unicodedata.pyd"
-  File "dist\w9xpopen.exe"
-  File "dist\wxmsw26uh_vc.dll"
-  File "dist\zlib.pyd"
-  File "dist\_controls_.pyd"
-  File "dist\_core_.pyd"
-  File "dist\_gdi_.pyd"
-  File "dist\_misc_.pyd"
-  File "dist\_socket.pyd"
-  File "dist\_ssl.pyd"
-  File "dist\_windows_.pyd"
+  File "dist\*.dll"
+  File "dist\*.pyd"
 
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -120,23 +109,13 @@ Section Uninstall
   !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
-  Delete "$INSTDIR\_windows_.pyd"
-  Delete "$INSTDIR\_ssl.pyd"
-  Delete "$INSTDIR\_socket.pyd"
-  Delete "$INSTDIR\_misc_.pyd"
-  Delete "$INSTDIR\_gdi_.pyd"
-  Delete "$INSTDIR\_core_.pyd"
-  Delete "$INSTDIR\_controls_.pyd"
-  Delete "$INSTDIR\zlib.pyd"
-  Delete "$INSTDIR\wxmsw26uh_vc.dll"
+  Delete "$INSTDIR\*.pyd"
+  Delete "$INSTDIR\*.dll"
   Delete "$INSTDIR\w9xpopen.exe"
-  Delete "$INSTDIR\unicodedata.pyd"
-  Delete "$INSTDIR\python24.dll"
-  Delete "$INSTDIR\MSVCR71.dll"
   Delete "$INSTDIR\library.zip"
   Delete "$INSTDIR\evec_upload.exe.log"
   Delete "$INSTDIR\evec_upload.exe"
-  Delete "$INSTDIR\bz2.pyd"
+
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$SMPROGRAMS\$ICONS_GROUP\Website.lnk"

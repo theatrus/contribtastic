@@ -190,7 +190,7 @@ class MainFrame(wx.Frame):
         menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Exit")
         
 
-        optmenu.Append(self.MENU_SETTINGS, "&Set/Locate EVE Directory...")
+        optmenu.Append(self.MENU_SETTINGS, "L&ocate EVE Market Export directory...")
         optmenu.Append(self.MENU_LOGIN, "&Login to your EVE-central.com account...")
         helpmenu.Append(self.MENU_ABOUT, "&About")
         
@@ -342,7 +342,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, evt):
         global ProgramVersionNice
-        dlg = wx.MessageDialog(self, 'EVE-Central.com MarketUploader ' + ProgramVersionNice +"\n(c) 2006 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
+        dlg = wx.MessageDialog(self, 'EVE-Central.com MarketUploader ' + ProgramVersionNice +"\n(c) 2006-2007 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
                                        wx.OK
                                )
         dlg.ShowModal()
@@ -359,7 +359,7 @@ class MainFrame(wx.Frame):
         
     def OnLocateDir(self, evt):
         global config_obj
-        dlg = wx.DirDialog(self, "Please locate the root of your EVE install:",
+        dlg = wx.DirDialog(self, "Please locate the market export directory (Documents and Settings\[user]\My Documents\EVE\logs\Marketlogs)..:",
                           style=wx.DD_DEFAULT_STYLE)
 
         # If the user selects OK, then we process the dialog's data.
@@ -455,16 +455,27 @@ def load_config():
     file.close()
     return ret
 
+
+
+
 class EVEc_Upload(wx.App):
     def OnInit(self):
         global config_obj
 
-
+            
         frame = MainFrame(None, "EVE-Central.com MarketUploader")
         self.SetTopWindow(frame)
         
 
-        frame.Show(True)
+        try:
+            if sys.argv[1] == "-hide":
+                frame.Show(False)
+            else:
+                frame.Show(True)
+        except:
+            frame.Show(True)
+
+
         return True
 
 if __name__ == "__main__":

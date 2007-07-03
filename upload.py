@@ -28,8 +28,8 @@ import wx.lib.newevent
 from threading import Thread
 
 
-ProgramVersion = 1020
-ProgramVersionNice = "1.2"
+ProgramVersion = 1030
+ProgramVersionNice = "1.3"
 CheckVersion = 1000
 
 (UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
@@ -90,13 +90,16 @@ def upload_data(path, win, userid):
     
     for item in dirl:
 
-        if item[-3:] == "txt" and item != "readme.txt":
+        if item[-3:] == "txt" and item != "readme.txt" and item.find("My orders")  == -1:
             # Found file
             upcount = upcount + 1
             typename = None
             try:
                 s = item.split(' - ')
-                typename = s[1]
+                if len(s) > 3:
+                    typename = s[1] + " - " + s[2]
+                else:
+                    typename = s[1]
             except:
                 # This isn't a valid item it seems like
                 continue
