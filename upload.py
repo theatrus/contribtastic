@@ -28,8 +28,8 @@ import wx.lib.newevent
 from threading import Thread
 
 
-ProgramVersion = 1030
-ProgramVersionNice = "1.3"
+ProgramVersion = 1031
+ProgramVersionNice = "1.3.1"
 CheckVersion = 1000
 
 (UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
@@ -95,9 +95,9 @@ def upload_data(path, win, userid):
             upcount = upcount + 1
             typename = None
             try:
-                s = item.split(' - ')
+                s = item.split('-')
                 if len(s) > 3:
-                    typename = s[1] + " - " + s[2]
+                    typename = s[1] + "-" + s[2]
                 else:
                     typename = s[1]
             except:
