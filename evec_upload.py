@@ -132,7 +132,7 @@ class MainFrame(wx.Frame):
                                        )
                 dlg.ShowModal()
                 dlg.Destroy()
-                os.system("explorer http://eve-central.com")
+                os.system("start http://eve-central.com")
                 sys.exit(-1)
 
         except IOError:
