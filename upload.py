@@ -36,15 +36,20 @@ CheckVersion = 1000
 (DoneUploadEvent, EVT_DONE_UPLOAD) = wx.lib.newevent.NewEvent()
 
 
-class UploadThread(Thread):
-    def __init__(self, path, win, userid):
-        Thread.__init__(self)
+class UploadPayload(object):
+    def __init__(self, path, win, userid, backup):
         self.path = path
         self.win = win
         self.userid = userid
+        self.backup = backup
+
+class UploadThread(Thread):
+    def __init__(self, payload):
+        Thread.__init__(self)
+        self.payload = payload
         self.setDaemon(False)
     def run(self):
-        upload_data(self.path, self.win,self.userid)
+        upload_data(self.payload)
 
 
 class ProtocolVersionMismatch(exceptions.Exception):
@@ -72,16 +77,16 @@ def check_client():
         return True
 
 
-def upload_data(path, win, userid):
+def upload_data(job):
 
     dirl = []
     upcount = 0
 
     try:
-        dirl = os.listdir(path)
+        dirl = os.listdir(job.path)
     except:
         evt = DoneUploadEvent(count = upcount, success = False)
-        wx.PostEvent(win, evt)
+        wx.PostEvent(job.win, evt)
 
         return None
 
@@ -92,6 +97,7 @@ def upload_data(path, win, userid):
 
         if item[-3:] == "txt" and item != "readme.txt" and item.find("My orders")  == -1:
             # Found file
+            filename = item
             upcount = upcount + 1
             typename = None
             try:
@@ -104,7 +110,7 @@ def upload_data(path, win, userid):
                 # This isn't a valid item it seems like
                 continue
 
-            fileh = open( os.path.normpath( os.path.join( path, item ) ) )
+            fileh = open( os.path.normpath( os.path.join( job.path, item ) ) )
             lines = ""
             linecount = 0
             for line in fileh.readlines():
@@ -114,31 +120,24 @@ def upload_data(path, win, userid):
 
             fileh.close()
 
-            submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 'userid': userid})
+            submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 'userid': job.userid})
 
             h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
             kk = h.readlines()
-            for llk in kk:
-                print llk
-
-
 
             h.close()
             evt = UpdateUploadEvent(typename = typename, success = True)
-            wx.PostEvent(win, evt)
-            os.remove( os.path.normpath( os.path.join( path, item ) ) )
+            wx.PostEvent(job.win, evt)
+
+            if job.backup:
+                os.renames( os.path.normpath (os.path.join(job.path, job.filename)), os.path.normpath( os.path.join (job.path, job.backup, job.filename) ) )
+            else:
+                os.remove( os.path.normpath( os.path.join( job.path, item ) ) )
 
 
 
     evt = DoneUploadEvent(count = upcount, success = True)
-    wx.PostEvent(win, evt)
+    wx.PostEvent(job.win, evt)
 
 
     return upcount
-
-
-
-
-
-if __name__ == "main":
-    upload_data()

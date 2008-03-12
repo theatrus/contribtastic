@@ -29,6 +29,7 @@ import urllib
 config_obj = {}
 
 
+
 class LoginDialog(wx.Dialog):
     def __init__(self, parent, char_name):
         wx.Dialog.__init__(self, parent, -1, "Login to EVE-Central", style = wx.DEFAULT_DIALOG_STYLE)
@@ -286,7 +287,7 @@ class MainFrame(wx.Frame):
 
     def load_infowidgets(self):
         global config_obj
-        path = config_obj['evepath']
+        path = config_obj['evepath'][0]
         self.pathtext.SetLabel( path)
         self.usertext.SetLabel(config_obj['character_name'])
         self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
@@ -353,8 +354,11 @@ class MainFrame(wx.Frame):
     def OnTimer(self, evt):
         global config_obj
         self.SetStatusText("Uploading...")
-        th = UploadThread(config_obj['evepath'], self, config_obj['character_id'])
+        job = new UploadJob(config_obj['evepath'][0], self, config_obj['character_id'])
+
+        th = UploadThread(job)
         th.start()
+
         self.scans += 1
 
     def OnLocateDir(self, evt):
@@ -418,9 +422,10 @@ def default_location():
 def default_data():
     global config_obj
 
-    config_obj = { 'version' : '1.2',
+    config_obj = { 'version' : '2.0',
                    'path_set' : False,
-                   'evepath' : default_location(),
+                   'backup' : 'backup'
+                   'evepath' : [default_location()],
                    'character_name' : 'Anonymous',
                    'character_id' : 0
                    }
