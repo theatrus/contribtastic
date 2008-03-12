@@ -1,3 +1,4 @@
+# python
 #    EVE-Central.com MarketUploader
 #    Copyright (C) 2005-2006 Yann Ramin
 #
@@ -132,7 +133,7 @@ class MainFrame(wx.Frame):
                                        )
                 dlg.ShowModal()
                 dlg.Destroy()
-                os.system("start http://eve-central.com")
+                os.system("explorer http://eve-central.com")
                 sys.exit(-1)
 
         except IOError:
@@ -356,11 +357,12 @@ class MainFrame(wx.Frame):
         th.start()
         self.scans += 1
 
-        
     def OnLocateDir(self, evt):
         global config_obj
+ 
         dlg = wx.DirDialog(self, "Please locate the market export directory (Documents and Settings\[user]\My Documents\EVE\logs\Marketlogs)..:",
-                          style=wx.DD_DEFAULT_STYLE)
+                          style=wx.DD_DEFAULT_STYLE,
+			  defaultPath=default_location() )
 
         # If the user selects OK, then we process the dialog's data.
         # This is done by getting the path data from the dialog - BEFORE
@@ -399,12 +401,26 @@ def get_charuploads(userid):
     cv.close()
     return long(num)
 
+def default_location():
+	if sys.platform == 'win32':
+	    from win32com.shell import shell, shellcon
+	    document_folder = os.path.join( shell.SHGetFolderPath( 0, shellcon.CSIDL_PERSONAL, 0, 0 ), 'Eve', 'logs', 'Marketlogs' ) 
+	elif sys.platform == 'darwin':
+            from Carbon import Folder, Folders
+            folderref = Folder.FSFindFolder( Folders.kUserDomain, Folders.kPreferencesFolderType, False )
+            document_folder = os.path.join( folderref.as_pathname(), 'Eve Online Preferences', 'p_drive', 'My Documents', 'EVE', 'logs', 'MarketLogs' )
+	else:
+            document_folder = '' # don't know what the linux client has
+
+	document_folder = os.path.normpath( document_folder )
+	return document_folder
+
 def default_data():
     global config_obj
 
     config_obj = { 'version' : '1.2',
                    'path_set' : False,
-                   'evepath' : 'C:\\Program Files\\CCP\\EVE\\',
+                   'evepath' : default_location(),
                    'character_name' : 'Anonymous',
                    'character_id' : 0
                    }
@@ -424,7 +440,7 @@ def save_config():
     except:
         pass
     
-    file = open(path+"\\data.pickle", "w")
+    file = open( os.path.normpath( os.path.join( path, 'data.pickle' ) ), "w")
 
     pickle.dump(config_obj, file)
 
@@ -439,7 +455,7 @@ def load_config():
     path = sp.GetUserLocalDataDir()
     file = None
     try:
-        file = open(path+"\\data.pickle", "r")
+        file = open( os.path.normpath( os.path.join( path, 'data.pickle' ) ), "r")
     except:
         default_data()
         save_config()
