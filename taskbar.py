@@ -1,3 +1,4 @@
+# python
 #    EVE-Central.com MarketUploader
 #    Copyright (C) 2005-2006 Yann Ramin
 #

@@ -104,7 +104,7 @@ def upload_data(path, win, userid):
                 # This isn't a valid item it seems like
                 continue
             
-            fileh = open(path+'\\'+item)
+            fileh = open( os.path.normpath( os.path.join( path, item ) ) )
             lines = ""
             linecount = 0
             for line in fileh.readlines():
@@ -126,7 +126,7 @@ def upload_data(path, win, userid):
             h.close()
             evt = UpdateUploadEvent(typename = typename, success = True)
             wx.PostEvent(win, evt)
-            os.remove(path+'\\'+item)
+            os.remove( os.path.normpath( os.path.join( path, item ) ) )
 
 
             
