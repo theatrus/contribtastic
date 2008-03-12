@@ -71,12 +71,12 @@ def check_client():
     else:
         return True
 
-    
+
 def upload_data(path, win, userid):
 
     dirl = []
     upcount = 0
-    
+
     try:
         dirl = os.listdir(path)
     except:
@@ -87,7 +87,7 @@ def upload_data(path, win, userid):
 
 
 
-    
+
     for item in dirl:
 
         if item[-3:] == "txt" and item != "readme.txt" and item.find("My orders")  == -1:
@@ -103,7 +103,7 @@ def upload_data(path, win, userid):
             except:
                 # This isn't a valid item it seems like
                 continue
-            
+
             fileh = open( os.path.normpath( os.path.join( path, item ) ) )
             lines = ""
             linecount = 0
@@ -113,23 +113,23 @@ def upload_data(path, win, userid):
                 linecount = linecount + 1
 
             fileh.close()
-            
+
             submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 'userid': userid})
-            
+
             h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
             kk = h.readlines()
             for llk in kk:
                 print llk
-                
-                
-                
+
+
+
             h.close()
             evt = UpdateUploadEvent(typename = typename, success = True)
             wx.PostEvent(win, evt)
             os.remove( os.path.normpath( os.path.join( path, item ) ) )
 
 
-            
+
     evt = DoneUploadEvent(count = upcount, success = True)
     wx.PostEvent(win, evt)
 

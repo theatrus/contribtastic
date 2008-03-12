@@ -25,7 +25,7 @@ class TaskBarIcon(wx.TaskBarIcon):
     TBMENU_CLOSE   = wx.NewId()
     TBMENU_QUIT  = wx.NewId()
     TBMENU_REMOVE  = wx.NewId()
-    
+
     def __init__(self, frame):
         wx.TaskBarIcon.__init__(self)
         self.frame = frame
@@ -34,7 +34,7 @@ class TaskBarIcon(wx.TaskBarIcon):
         icon = self.MakeIcon(images.getIconImage())
         self.SetIcon(icon, "EVE-Central MarketUploader")
         self.imgidx = 1
-        
+
         # bind some events
         self.Bind(wx.EVT_TASKBAR_LEFT_DCLICK, self.OnTaskBarToggle)
         self.Bind(wx.EVT_MENU, self.OnTaskBarActivate, id=self.TBMENU_RESTORE)
@@ -44,7 +44,7 @@ class TaskBarIcon(wx.TaskBarIcon):
 
     def __del__(self):
         self.RemoveIcon()
-        
+
     def CreatePopupMenu(self):
         """
         This method is called by the base class when it needs to popup
@@ -76,7 +76,7 @@ class TaskBarIcon(wx.TaskBarIcon):
         # wxMac can be any size upto 128x128, so leave the source img alone....
         icon = wx.IconFromBitmap(img.ConvertToBitmap() )
         return icon
-    
+
 
     def OnTaskBarActivate(self, evt):
         if self.frame.IsIconized():
@@ -84,7 +84,7 @@ class TaskBarIcon(wx.TaskBarIcon):
         if not self.frame.IsShown():
             self.frame.Show(True)
         self.frame.Raise()
-            
+
 
     def OnTaskBarToggle(self, evt):
         if self.frame.IsIconized():

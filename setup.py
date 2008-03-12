@@ -34,27 +34,27 @@ manifestVersion="1.0">
 """
 
     setup(
-         options={"py2exe":{"optimize":2}},
+        options={"py2exe":{"optimize":2}},
 
-         windows=
-[
-{ 
-            "script": "evec_upload.py", 
-            "icon_resources": [(1, "evec_all.ico")] ,
-            "other_resources": [(24,1,manifest)]
-        }
-]
-    )
+        windows=
+        [
+            {
+                "script": "evec_upload.py",
+                "icon_resources": [(1, "evec_all.ico")] ,
+                "other_resources": [(24,1,manifest)]
+                }
+            ]
+        )
 elif sys.platform == 'darwin':
-	from setuptools import setup
-        buildstyle = 'app'
+    from setuptools import setup
+    buildstyle = 'app'
 
-	setup(
-		app=[ 'evec_upload.py' ],
-		options=dict( py2app=dict(
-			optimize=2,
-			iconfile='evec_mac.icns'
-		) ),
-    		name="evec_upload",
-    		setup_requires=["py2app"],
-	)
+    setup(
+        app=[ 'evec_upload.py' ],
+        options=dict( py2app=dict(
+                optimize=2,
+                iconfile='evec_mac.icns'
+                ) ),
+        name="evec_upload",
+        setup_requires=["py2app"],
+        )
