@@ -19,16 +19,16 @@
 from evec_upload.upload import *
 from evec_upload.taskbar import *
 import evec_upload.login
+import evec_upload.options
+
+from evec_upload.config import Config
+
 import wx
 import pickle
 import os
 import sys
 import images
 import urllib
-
-
-
-config_obj = {}
 
 
 
@@ -66,7 +66,8 @@ class MainFrame(wx.Frame):
 
 
         # Load config
-        r = load_config()
+        c = Config()
+        r = c.reinit
         if r == -1:
             dlg = wx.MessageDialog(self, """The uploader client configuration has been reset since an old configuration file was found.
             Please check your configuration (such as user login and EVE path).""", 'Client Upgrade', wx.OK | wx.ICON_INFORMATION)
@@ -147,6 +148,8 @@ class MainFrame(wx.Frame):
 
         self.uploadtext = wx.StaticText(panel, -1, "")
 
+        config_obj = Config()
+
         if config_obj['character_id'] == 0:
             self.uploads = long(0)
         else:
@@ -199,7 +202,8 @@ class MainFrame(wx.Frame):
         self.load_infowidgets()
 
     def load_infowidgets(self):
-        global config_obj
+        config_obj = Config()
+
         path = config_obj['evepath'][0]
         self.pathtext.SetLabel( path)
         self.usertext.SetLabel(config_obj['character_name'])
@@ -207,14 +211,16 @@ class MainFrame(wx.Frame):
 
 
     def OnLogin(self,evt):
-        global config_obj
+
+        config_obj = Config()
+
         dlg = evec_upload.login.LoginDialog(self, config_obj['character_name'])
         r = dlg.ShowModal()
         if r == wx.ID_OK:
             if dlg.anon_cb.IsChecked():
                 config_obj['character_name'] = "Anonymous"
                 config_obj['character_id'] = 0
-                save_config()
+
                 self.load_infowidgets()
             else:
                 v = get_charid(dlg.uname.GetValue(), dlg.passwd.GetValue())
@@ -228,7 +234,6 @@ class MainFrame(wx.Frame):
                     config_obj['character_id'] = v
                     config_obj['character_name'] = dlg.uname.GetValue()
                     self.load_infowidgets()
-                    save_config()
 
 
         else:
@@ -242,13 +247,13 @@ class MainFrame(wx.Frame):
         sys.exit(0)
 
     def OnUploadUpdate(self, evt):
-        global config_obj
+
         self.uploads = self.uploads + 1
         self.SetStatusText("Uploaded " + evt.typename)
         self.load_infowidgets()
 
     def OnUploadDone(self, evt):
-        global config_obj
+
         self.load_infowidgets()
         if evt.success == True:
             self.SetStatusText("Idle - Uploaded " + `evt.count` + " last run")
@@ -265,7 +270,7 @@ class MainFrame(wx.Frame):
 
 
     def OnTimer(self, evt):
-        global config_obj
+        config_obj = Config()
         self.SetStatusText("Uploading...")
         job = UploadPayload(config_obj['evepath'][0], self, config_obj['character_id'], config_obj['backup'])
 
@@ -275,7 +280,8 @@ class MainFrame(wx.Frame):
         self.scans += 1
 
     def OnLocateDir(self, evt):
-        global config_obj
+
+        config_obj = Config()
 
         dlg = wx.DirDialog(self, "Please locate the market export directory (Documents and Settings\[user]\My Documents\EVE\logs\Marketlogs)..:",
                            style=wx.DD_DEFAULT_STYLE,
@@ -287,7 +293,7 @@ class MainFrame(wx.Frame):
         if dlg.ShowModal() == wx.ID_OK:
             config_obj['evepath'] = dlg.GetPath()
             config_obj['path_set'] = True
-        save_config()
+
         self.load_infowidgets()
 
 
@@ -318,87 +324,9 @@ def get_charuploads(userid):
     cv.close()
     return long(num)
 
-def default_location():
-    if sys.platform == 'win32':
-        from win32com.shell import shell, shellcon
-        document_folder = os.path.join( shell.SHGetFolderPath( 0, shellcon.CSIDL_PERSONAL, 0, 0 ), 'Eve', 'logs', 'Marketlogs' )
-    elif sys.platform == 'darwin':
-        from Carbon import Folder, Folders
-        folderref = Folder.FSFindFolder( Folders.kUserDomain, Folders.kPreferencesFolderType, False )
-        document_folder = os.path.join( folderref.as_pathname(), 'Eve Online Preferences', 'p_drive', 'My Documents', 'EVE', 'logs', 'MarketLogs' )
-    else:
-        document_folder = '' # don't know what the linux client has
-
-        document_folder = os.path.normpath( document_folder )
-        return document_folder
-
-def default_data():
-    global config_obj
-
-    loc = default_location()
-    loc = [loc]
-
-    config_obj = { 'version' : '2.0',
-                   'path_set' : False,
-                   'backup' : 'backup',
-                   'evepath' : loc,
-                   'character_name' : 'Anonymous',
-                   'character_id' : 0
-                   }
-
-def save_config():
-    global config_obj
-
-
-
-    sp = wx.StandardPaths.Get()
-    wx.GetApp().SetAppName("EVE-Central MarketUploader")
-    path = sp.GetUserLocalDataDir()
-
-
-    try:
-        os.mkdir(path)
-    except:
-        pass
-
-    file = open( os.path.normpath( os.path.join( path, 'data.pickle' ) ), "w")
-
-    pickle.dump(config_obj, file)
-
-    file.close()
-
-
-def load_config():
-    global config_obj
-
-    sp = wx.StandardPaths.Get()
-    wx.GetApp().SetAppName("EVE-Central MarketUploader")
-    path = sp.GetUserLocalDataDir()
-    file = None
-    try:
-        file = open( os.path.normpath( os.path.join( path, 'data.pickle' ) ), "r")
-    except:
-        default_data()
-        save_config()
-        return
-
-    ret = 0
-    config_obj = pickle.load(file)
-    if config_obj['version'] != '2.0':
-        default_data()
-        save_config()
-        ret = -1
-
-    file.close()
-    return ret
-
-
-
 
 class EVEc_Upload(wx.App):
     def OnInit(self):
-        global config_obj
-
 
         frame = MainFrame(None, "EVE-Central.com MarketUploader")
         self.SetTopWindow(frame)
