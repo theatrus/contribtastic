@@ -1,6 +1,8 @@
 import sys
 
-if sys.platform == 'win32':
+print "Your platform is",sys.platform
+
+if sys.platform == 'win32' or sys.platform == 'linux2':
     from distutils.core import setup
     import py2exe
     manifest = """
@@ -39,8 +41,8 @@ manifestVersion="1.0">
         windows=
         [
             {
-                "script": "evec_upload.py",
-                "icon_resources": [(1, "evec_all.ico")] ,
+                "script": "src/evec_upload.py",
+                "icon_resources": [(1, "images/evec_all.ico")] ,
                 "other_resources": [(24,1,manifest)]
                 }
             ]
@@ -50,10 +52,10 @@ elif sys.platform == 'darwin':
     buildstyle = 'app'
 
     setup(
-        app=[ 'evec_upload.py' ],
+        app=[ 'src/evec_upload.py' ],
         options=dict( py2app=dict(
                 optimize=2,
-                iconfile='evec_mac.icns'
+                iconfile='images/evec_mac.icns'
                 ) ),
         name="evec_upload",
         setup_requires=["py2app"],
