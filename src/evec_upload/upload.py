@@ -1,5 +1,5 @@
 #    EVE-Central.com MarketUploader
-#    Copyright (C) 2005-2006 Yann Ramin
+#    Copyright (C) 2005-2008 Yann Ramin
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -28,9 +28,9 @@ import wx.lib.newevent
 from threading import Thread
 
 
-ProgramVersion = 1031
-ProgramVersionNice = "1.3.1"
-CheckVersion = 1000
+ProgramVersion = 2000
+ProgramVersionNice = "2.0"
+CheckVersion = 1031
 
 (UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
 (DoneUploadEvent, EVT_DONE_UPLOAD) = wx.lib.newevent.NewEvent()
@@ -100,12 +100,16 @@ def upload_data(job):
             filename = item
             upcount = upcount + 1
             typename = None
+            times = 0
             try:
+                # Bad check for hyphenated names
                 s = item.split('-')
                 if len(s) > 3:
                     typename = s[1] + "-" + s[2]
+                    times = s[3]
                 else:
                     typename = s[1]
+                    times = s[2]
             except:
                 # This isn't a valid item it seems like
                 continue
@@ -120,7 +124,7 @@ def upload_data(job):
 
             fileh.close()
 
-            submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 'userid': job.userid})
+            submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 'userid': job.userid, 'timestamp': times})
 
             h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
             kk = h.readlines()

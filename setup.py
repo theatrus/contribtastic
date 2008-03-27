@@ -41,7 +41,7 @@ manifestVersion="1.0">
         windows=
         [
             {
-                "script": "src/evec_upload.py",
+                "script": "src/uploader.py",
                 "icon_resources": [(1, "images/evec_all.ico")] ,
                 "other_resources": [(24,1,manifest)]
                 }
@@ -52,7 +52,7 @@ elif sys.platform == 'darwin':
     buildstyle = 'app'
 
     setup(
-        app=[ 'src/evec_upload.py' ],
+        app=[ 'src/uploader.py' ],
         options=dict( py2app=dict(
                 optimize=2,
                 iconfile='images/evec_mac.icns'
