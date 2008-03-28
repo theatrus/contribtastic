@@ -25,7 +25,43 @@ import images
 import urllib
 
 
+from evec_upload.config import Config
+
+
 class LoginDialog(wx.Dialog):
+
+    @staticmethod
+    def launch():
+
+        config_obj = Config()
+
+        dlg = evec_upload.login.LoginDialog(self, config_obj['character_name'])
+        r = dlg.ShowModal()
+        if r == wx.ID_OK:
+            if dlg.anon_cb.IsChecked():
+                config_obj['character_name'] = "Anonymous"
+                config_obj['character_id'] = 0
+
+                self.load_infowidgets()
+            else:
+                v = get_charid(dlg.uname.GetValue(), dlg.passwd.GetValue())
+                if v == -1:
+                    dlge = wx.MessageDialog(self, 'User login information incorrect. Using old value', 'Bad login',
+                                            wx.OK | wx.ICON_ERROR
+                                            )
+                    dlge.ShowModal()
+                    dlge.Destroy()
+                else:
+                    config_obj['character_id'] = v
+                    config_obj['character_name'] = dlg.uname.GetValue()
+                    self.load_infowidgets()
+
+
+        else:
+            pass
+        dlg.Destroy()
+
+
     def __init__(self, parent, char_name):
         wx.Dialog.__init__(self, parent, -1, "Login to EVE-Central", style = wx.DEFAULT_DIALOG_STYLE)
 

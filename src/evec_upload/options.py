@@ -25,8 +25,10 @@ import images
 import urllib
 
 
-class LoginDialog(wx.Dialog):
-    def __init__(self, parent, char_name):
+
+class OptionDialog(wx.Dialog):
+    def __init__(self, parent):
+
         wx.Dialog.__init__(self, parent, -1, "Options", style = wx.DEFAULT_DIALOG_STYLE)
 
         sizer = wx.BoxSizer(wx.VERTICAL)
@@ -38,7 +40,7 @@ class LoginDialog(wx.Dialog):
         self.backup = wx.CheckBox(self, -1, "Create backups of the uploaded data")
         sizer.Add(self.backup, 0, wx.ALL, 5)
 
-        self.suggest = wx.CheckBox(self, -1, "Offser suggestions of what can be uploaded")
+        self.suggest = wx.CheckBox(self, -1, "Offer suggestions of what can be uploaded")
         sizer.Add(self.suggest, 0, wx.ALL, 5)
 
 
@@ -94,10 +96,3 @@ class LoginDialog(wx.Dialog):
 
         self.SetSizer(sizer)
         sizer.Fit(self)
-
-        if char_name == "Anonymous":
-            self.anon_cb.SetValue(True)
-            self.uname.Enable(False)
-            self.passwd.Enable(False)
-        else:
-            self.uname.SetValue(char_name)

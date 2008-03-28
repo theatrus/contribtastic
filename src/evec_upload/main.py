@@ -37,7 +37,8 @@ class MainFrame(wx.Frame):
     MENU_SETTINGS = wx.NewId()
     MENU_ABOUT = wx.NewId()
     MENU_SCANNOW = wx.NewId()
-    MENU_LOGIN = wx.NewId()
+
+
 
     def __init__(self, parent, title):
         wx.Frame.__init__(self, parent, -1, title,
@@ -96,7 +97,7 @@ class MainFrame(wx.Frame):
         menu = wx.Menu()
 
         # option menu
-        optmenu = wx.Menu()
+        opmenu = wx.Menu()
 
         # help menu
         helpmenu = wx.Menu()
@@ -106,27 +107,32 @@ class MainFrame(wx.Frame):
         # creates an accelerator, the third param is some help text
         # that will show up in the statusbar
         menu.Append(self.MENU_SCANNOW, "S&can now...")
-
         menu.AppendSeparator()
+
+
+        menu.Append(self.MENU_SETTINGS, "&Settings...")
+
+
+
         menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Exit")
 
 
-        optmenu.Append(self.MENU_SETTINGS, "L&ocate EVE Market Export directory...")
-        optmenu.Append(self.MENU_LOGIN, "&Login to your EVE-central.com account...")
+
+
+
         helpmenu.Append(self.MENU_ABOUT, "&About")
 
         # bind the menu event to an event handler
         self.Bind(wx.EVT_MENU, self.OnTimer, id=self.MENU_SCANNOW)
         self.Bind(wx.EVT_MENU, self.OnTimeToClose, id=wx.ID_EXIT)
-        self.Bind(wx.EVT_MENU, self.OnLocateDir, id=self.MENU_SETTINGS)
+        self.Bind(wx.EVT_MENU, self.OnOptions, id=self.MENU_SETTINGS)
         self.Bind(wx.EVT_MENU, self.OnAbout, id = self.MENU_ABOUT)
-        self.Bind(wx.EVT_MENU, self.OnLogin, id = self.MENU_LOGIN)
 
         self.Bind(wx.EVT_CLOSE, self.OnTimeToClose)
 
         # and put the menu on the menubar
         menuBar.Append(menu, "&File")
-        menuBar.Append(optmenu, "&Options")
+
         menuBar.Append(helpmenu, "&Help")
         self.SetMenuBar(menuBar)
 
@@ -209,36 +215,9 @@ class MainFrame(wx.Frame):
         self.usertext.SetLabel(config_obj['character_name'])
         self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
 
-
-    def OnLogin(self,evt):
-
-        config_obj = Config()
-
-        dlg = evec_upload.login.LoginDialog(self, config_obj['character_name'])
-        r = dlg.ShowModal()
-        if r == wx.ID_OK:
-            if dlg.anon_cb.IsChecked():
-                config_obj['character_name'] = "Anonymous"
-                config_obj['character_id'] = 0
-
-                self.load_infowidgets()
-            else:
-                v = get_charid(dlg.uname.GetValue(), dlg.passwd.GetValue())
-                if v == -1:
-                    dlge = wx.MessageDialog(self, 'User login information incorrect. Using old value', 'Bad login',
-                                            wx.OK | wx.ICON_ERROR
-                                            )
-                    dlge.ShowModal()
-                    dlge.Destroy()
-                else:
-                    config_obj['character_id'] = v
-                    config_obj['character_name'] = dlg.uname.GetValue()
-                    self.load_infowidgets()
-
-
-        else:
-            pass
-        dlg.Destroy()
+    def OnOptions(self, evt):
+        dlg = evec_upload.options.OptionDialog(self)
+        dlg.ShowModal()
 
     def OnTimeToClose(self, evt):
         """Event handler for the button click."""
