@@ -33,9 +33,9 @@ def default_location():
         document_folder = os.path.join( folderref.as_pathname(), 'Eve Online Preferences', 'p_drive', 'My Documents', 'EVE', 'logs', 'MarketLogs' )
     else:
         document_folder = '' # don't know what the linux client has
-
         document_folder = os.path.normpath( document_folder )
-        return document_folder
+
+    return document_folder
 
 
 class Config(object):

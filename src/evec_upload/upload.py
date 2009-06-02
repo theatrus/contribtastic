@@ -134,7 +134,7 @@ def upload_data(job):
             wx.PostEvent(job.win, evt)
 
             if job.backup:
-                os.renames( os.path.normpath (os.path.join(job.path, job.filename)), os.path.normpath( os.path.join (job.path, job.backup, job.filename) ) )
+                os.renames( os.path.normpath (os.path.join(job.path, filename)), os.path.normpath( os.path.join (job.path, job.backup, filename) ) )
             else:
                 os.remove( os.path.normpath( os.path.join( job.path, item ) ) )
 

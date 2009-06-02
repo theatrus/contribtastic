@@ -211,7 +211,8 @@ class MainFrame(wx.Frame):
         config_obj = Config()
 
         path = config_obj['evepath'][0]
-        self.pathtext.SetLabel( path)
+        if (path):
+            self.pathtext.SetLabel( path)
         self.usertext.SetLabel(config_obj['character_name'])
         self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
 
