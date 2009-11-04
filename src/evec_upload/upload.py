@@ -81,13 +81,13 @@ def check_client():
         return True
 
 
-def perform_upload(typename, linex, userid, times, cache = False, region = 0, typeid = 0):
+def perform_upload(typename, lines, userid, times, cache = False, region = 0, typeid = 0):
     submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 
                                    'userid': userid , 'timestamp': times, 'cache': cache, 
                                    'region' : region, 'typeid' : typeid})
     
     h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
-    h.readlines()
+    print h.read() # Gobble up result
     h.close()
 
 def check_csv(dirl):
@@ -137,7 +137,7 @@ def upload_data(job):
 
     dirl = []
     upcount = 0
-    print "Using path ",job.path
+
     try:
         dirl = os.listdir(job.path)
     except:
@@ -146,36 +146,55 @@ def upload_data(job):
         return None
 
     config = Config()
-    highest_timestamp = 0
+
+    highest_timestamp = config['last_upload_time']
+    start_ts = config['last_upload_time']
+    print "UPLOAD START: TIMESTAMP CHECK IS > ",start_ts
     for item in dirl:
         if item[-6:] != ".cache":
             continue
+        item = os.path.join(job.path, item)
         statinfo = os.stat(item)
-        if statinfo.st_mtime <= config['last_upload_time']:
+        if statinfo.st_mtime <= start_ts:
+            print "IGNORE:",item
             continue
         if statinfo.st_mtime > highest_timestamp:
             highest_timestamp = statinfo.st_mtime
-
+        print item, statinfo.st_mtime, highest_timestamp
         try:
-            market_parser = evecache.MarketParser(item)
-            entries = mp.getList()
-            region = entries.region()
-            type = entries.type()
-            orders = entries.getSellOrders()
-            orders.extend(entries.getBuyOrders())
-            
-            csvOutput = StringIO()
-            print >>csvOutput, "CACHE GENERATED FILE HEADER"
-            for order in orders:
-                print >>csvOutput, order.toCsv()
+            market_parser = evecache.MarketParser(str(item))
+            if market_parser.valid() == True:
+                print "Valid"
+                entries = market_parser.getList()
 
-            perform_upload("", csvOutput.getvalue(), job.userid, statinfo.st_mtime, True, region = region, typeid = typeid)
-            csvOutput.close()
-            evt = UpdateUploadEvent(typename = str(type), success = True)
-            wx.PostEvent(job.win, evt)
-        except Excetion,e:
+                region = entries.region()
+                typeid = entries.type()
+                orders = []
+                orders1 = entries.getSellOrders()
+                orders2 = entries.getBuyOrders()
+                # Fix up STL SWIG types not being list()
+                for order in orders1:
+                    orders.append(order)
+                for order in orders2:
+                    orders.append(order)
+
+                print "Upload of ",typeid,region
+                csvOutput = StringIO()
+                print >>csvOutput, "CACHE GENERATED FILE HEADER"
+                for order in orders:
+                    print >>csvOutput, order.toCsv()
+
+                #print csvOutput.getvalue()
+                perform_upload("", csvOutput.getvalue(), job.userid, statinfo.st_mtime, True, region = region, typeid = typeid)
+                csvOutput.close()
+                evt = UpdateUploadEvent(typename = str(typeid), success = True)
+                wx.PostEvent(job.win, evt)
+                upcount += 1
+            else:
+                print "Not valid"
+        except Exception,e:
             print e
-
+            
     config['last_upload_time'] = highest_timestamp
 
 

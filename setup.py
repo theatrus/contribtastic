@@ -25,6 +25,7 @@ if sys.platform == 'win32' or sys.platform == 'linux2':
     setup(
         options={"py2exe":
                      {"optimize": 2, 
+                      "compressed" : False,
                       "packages" : ['evec_upload'],
                       }
                  },

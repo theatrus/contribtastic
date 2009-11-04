@@ -199,7 +199,7 @@ class MainFrame(wx.Frame):
 
 
         self.timer = wx.Timer(self)
-        self.timer.Start(60000)
+        self.timer.Start(120000)
 
         self.Bind(wx.EVT_TIMER, self.OnTimer)
         self.Bind(EVT_UPDATE_UPLOAD, self.OnUploadUpdate)
@@ -252,8 +252,9 @@ class MainFrame(wx.Frame):
     def OnTimer(self, evt):
         config_obj = Config()
         self.SetStatusText("Uploading...")
+        
         job = UploadPayload(config_obj['evepath'][0], self, config_obj['character_id'], config_obj['backup'])
-
+        
         th = UploadThread(job)
         th.start()
 
