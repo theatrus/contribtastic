@@ -64,7 +64,7 @@ class UploadThread(Thread):
             payload = self.queue.get()
             try:
                 upload_data(payload)
-            except e:
+            except Exception as e:
                 sys.stderr.write(e)
 
 
@@ -198,7 +198,8 @@ def upload_data(job):
                     print >>csvOutput, order.toCsv()
 
                 #print csvOutput.getvalue()
-                perform_upload("", csvOutput.getvalue(), job.userid, statinfo.st_mtime, True, region = region, typeid = typeid)
+                perform_upload("", csvOutput.getvalue(), job.userid, statinfo.st_mtime,
+                               True, region = region, typeid = typeid)
                 csvOutput.close()
                 evt = UpdateUploadEvent(typename = str(typeid), success = True)
                 wx.PostEvent(job.win, evt)
