@@ -78,6 +78,8 @@ class MainFrame(wx.Frame):
 
 
 
+        self.upload_thread = UploadThread(job)
+        self.upload_thread.start()
 
 
 
@@ -237,6 +239,7 @@ class MainFrame(wx.Frame):
         self.load_infowidgets()
         if evt.success == True:
             self.SetStatusText("Idle - Uploaded " + `evt.count` + " last run")
+            self.scans += 1
         else:
             self.SetStatusText("Error scanning directory! Check EVE path!")
 
@@ -252,13 +255,11 @@ class MainFrame(wx.Frame):
     def OnTimer(self, evt):
         config_obj = Config()
         self.SetStatusText("Uploading...")
-        
-        job = UploadPayload(config_obj['evepath'][0], self, config_obj['character_id'], config_obj['backup'])
-        
-        th = UploadThread(job)
-        th.start()
 
-        self.scans += 1
+        job = UploadPayload(config_obj['evepath'][0], self,
+                            config_obj['character_id'], config_obj['backup'])
+        self.upload_thread.trigger(job)
+
 
     def OnLocate(self, evt):
         config_obj = Config()

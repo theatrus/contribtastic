@@ -28,6 +28,7 @@ import wx
 import wx.lib.newevent
 
 from threading import Thread
+from Queue import Queue
 import evecache
 from evec_upload.config import Config
 
@@ -48,12 +49,24 @@ class UploadPayload(object):
         self.backup = backup
 
 class UploadThread(Thread):
-    def __init__(self, payload):
+    def __init__(self):
         Thread.__init__(self)
         self.payload = payload
         self.setDaemon(False)
+        self.queue = Queue()
+
+    def trigger(self, payload):
+        self.queue.put(payload)
+
+
     def run(self):
-        upload_data(self.payload)
+        while True:
+            payload = self.queue.get()
+            try:
+                upload_data(payload)
+            except e:
+                sys.stderr.write(e)
+
 
 
 class ProtocolVersionMismatch(exceptions.Exception):
@@ -82,10 +95,10 @@ def check_client():
 
 
 def perform_upload(typename, lines, userid, times, cache = False, region = 0, typeid = 0):
-    submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 
-                                   'userid': userid , 'timestamp': times, 'cache': cache, 
+    submitdata = urllib.urlencode({'typename' : typename, 'data' : lines,
+                                   'userid': userid , 'timestamp': times, 'cache': cache,
                                    'region' : region, 'typeid' : typeid})
-    
+
     h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
     print h.read() # Gobble up result
     h.close()
@@ -194,13 +207,13 @@ def upload_data(job):
                 print "Not valid"
         except Exception,e:
             print e
-            
+
     config['last_upload_time'] = highest_timestamp
 
 
-        
-        
-        
+
+
+
     upcount += check_csv(dirl)
 
 
