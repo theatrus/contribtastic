@@ -21,11 +21,14 @@ import re
 import exceptions
 import sys
 import urllib
+import stat
+from cStringIO import StringIO
 
 import wx
 import wx.lib.newevent
 
 from threading import Thread
+import evecache
 
 
 ProgramVersion = 2000
@@ -77,24 +80,19 @@ def check_client():
         return True
 
 
-def upload_data(job):
+def perform_upload(typename, linex, userid, times, cache = False, region = 0, typeid = 0):
+    submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 
+                                   'userid': userid , 'timestamp': times, 'cache': cache, 
+                                   'region' : region, 'typeid' : typeid})
+    
+    h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
+    h.readlines()
+    h.close()
 
-    dirl = []
+def check_csv(dirl):
     upcount = 0
-
-    try:
-        dirl = os.listdir(job.path)
-    except:
-        evt = DoneUploadEvent(count = upcount, success = False)
-        wx.PostEvent(job.win, evt)
-
-        return None
-
-
-
-
     for item in dirl:
-
+        # Old style CSV uploader
         if item[-3:] == "txt" and item != "readme.txt" and item.find("My orders")  == -1:
             # Found file
             filename = item
@@ -123,13 +121,7 @@ def upload_data(job):
                 linecount = linecount + 1
 
             fileh.close()
-
-            submitdata = urllib.urlencode({'typename' : typename, 'data' : lines, 'userid': job.userid, 'timestamp': times})
-
-            h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
-            kk = h.readlines()
-
-            h.close()
+            perform_upload(typename, lines, job.userid, times, False)
             evt = UpdateUploadEvent(typename = typename, success = True)
             wx.PostEvent(job.win, evt)
 
@@ -137,7 +129,59 @@ def upload_data(job):
                 os.renames( os.path.normpath (os.path.join(job.path, filename)), os.path.normpath( os.path.join (job.path, job.backup, filename) ) )
             else:
                 os.remove( os.path.normpath( os.path.join( job.path, item ) ) )
+        return upcount
 
+
+def upload_data(job):
+
+    dirl = []
+    upcount = 0
+
+    try:
+        dirl = os.listdir(job.path)
+    except:
+        evt = DoneUploadEvent(count = upcount, success = False)
+        wx.PostEvent(job.win, evt)
+        return None
+
+    config = Config()
+    highest_timestamp = 0
+    for item in dirl:
+        if item[-6:] != ".cache":
+            continue
+        statinfo = os.stat(item)
+        if statinfo.st_mtime <= config['last_upload_time']:
+            continue
+        if statinfo.st_mtime > highest_timestamp:
+            highest_timestamp = statinfo.st_mtime
+
+        try:
+            market_parser = evecache.MarketParser(item)
+            entries = mp.getList()
+            region = entries.region()
+            type = entries.type()
+            orders = entries.getSellOrders()
+            orders.extend(entries.getBuyOrders())
+            
+            csvOutput = StringIO()
+            print >>csvOutput, "CACHE GENERATED FILE HEADER"
+            for order in orders:
+                print >>csvOutput, order.toCsv()
+
+            perform_upload("", csvOutput.getvalue(), job.userid, statinfo.st_mtime, True, region = region, typeid = typeid)
+            csvOutput.close()
+            evt = UpdateUploadEvent(typename = str(type), success = True)
+            wx.PostEvent(job.win, evt)
+        except Excetion e:
+            print e
+
+    config['last_upload_time'] = highest_timestamp
+
+
+        
+        
+        
+    upcount += check_csv(dirl)
 
 
     evt = DoneUploadEvent(count = upcount, success = True)

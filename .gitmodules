@@ -1,0 +1,3 @@
+[submodule "libevecache"]
+	path = libevecache
+	url = git://gitorious.org/libevecache/libevecache.git

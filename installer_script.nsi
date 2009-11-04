@@ -2,8 +2,8 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "EVE-Central.com MarketUploader"
-!define PRODUCT_VERSION "1.3.1"
-!define PRODUCT_PUBLISHER "StackWorks Enterprises"
+!define PRODUCT_VERSION "2.0-alpha"
+!define PRODUCT_PUBLISHER "StackWorks LLC"
 !define PRODUCT_WEB_SITE "http://eve-central.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\evec_upload.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"

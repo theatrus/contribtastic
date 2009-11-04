@@ -21,7 +21,7 @@ from evec_upload.taskbar import *
 import evec_upload.login
 import evec_upload.options
 
-from evec_upload.config import Config
+from evec_upload.config import Config, default_location
 
 import wx
 import pickle
@@ -37,7 +37,7 @@ class MainFrame(wx.Frame):
     MENU_SETTINGS = wx.NewId()
     MENU_ABOUT = wx.NewId()
     MENU_SCANNOW = wx.NewId()
-
+    MENU_LOCATE = wx.NewId()
 
 
     def __init__(self, parent, title):
@@ -111,7 +111,7 @@ class MainFrame(wx.Frame):
 
 
         menu.Append(self.MENU_SETTINGS, "&Settings...")
-
+        menu.Append(self.MENU_LOCATE, "&Locate cache folder...")
 
 
         menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Exit")
@@ -127,7 +127,7 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnTimeToClose, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnOptions, id=self.MENU_SETTINGS)
         self.Bind(wx.EVT_MENU, self.OnAbout, id = self.MENU_ABOUT)
-
+        self.Bind(wx.EVT_MENU, self.OnLocate, id = self.MENU_LOCATE)
         self.Bind(wx.EVT_CLOSE, self.OnTimeToClose)
 
         # and put the menu on the menubar
@@ -242,7 +242,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, evt):
         global ProgramVersionNice
-        dlg = wx.MessageDialog(self, 'EVE-Central.com MarketUploader ' + ProgramVersionNice +"\n(c) 2006-2007 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
+        dlg = wx.MessageDialog(self, 'EVE-Central.com MarketUploader ' + ProgramVersionNice +"\n(c) 2006-2010 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
                                wx.OK
                                )
         dlg.ShowModal()
@@ -259,17 +259,12 @@ class MainFrame(wx.Frame):
 
         self.scans += 1
 
-    def OnLocateDir(self, evt):
-
+    def OnLocate(self, evt):
         config_obj = Config()
-
-        dlg = wx.DirDialog(self, "Please locate the market export directory (Documents and Settings\[user]\My Documents\EVE\logs\Marketlogs)..:",
+        dlg = wx.DirDialog(self, "Please locate the cache folder",
                            style=wx.DD_DEFAULT_STYLE,
                            defaultPath=default_location() )
 
-        # If the user selects OK, then we process the dialog's data.
-        # This is done by getting the path data from the dialog - BEFORE
-        # we destroy it.
         if dlg.ShowModal() == wx.ID_OK:
             config_obj['evepath'] = dlg.GetPath()
             config_obj['path_set'] = True
