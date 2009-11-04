@@ -1,52 +1,40 @@
 import sys
 
 print "Your platform is",sys.platform
-
+sys.path.append('src')
 if sys.platform == 'win32' or sys.platform == 'linux2':
     from distutils.core import setup
     import py2exe
-    manifest = """
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<assembly xmlns="urn:schemas-microsoft-com:asm.v1"
-manifestVersion="1.0">
-<assemblyIdentity
 
-    version="0.64.1.0"
-    processorArchitecture="x86"
-    name="Controls"
-    type="win32"
+    try:
+        # if this doesn't work, try import modulefinder
+        import py2exe.mf as modulefinder
+        import win32com
+        for p in win32com.__path__[1:]:
+            modulefinder.AddPackagePath("win32com", p)
+        for extra in ["win32com.shell"]: #,"win32com.mapi"
+            __import__(extra)
+            m = sys.modules[extra]
+            for p in m.__path__[1:]:
+                modulefinder.AddPackagePath(extra, p)
+    except ImportError:
+        # no build path setup, no worries.
+        pass
 
-/>
-<description>myProgram</description>
-<dependency>
-
-    <dependentAssembly>
-        <assemblyIdentity
-            type="win32"
-            name="Microsoft.Windows.Common-Controls"
-            version="6.0.0.0"
-            processorArchitecture="X86"
-            publicKeyToken="6595b64144ccf1df"
-            language="*"
-        />
-    </dependentAssembly>
-
-</dependency>
-</assembly>
-"""
 
     setup(
-        options={"py2exe":{"optimize":2}},
-
-        windows=
-        [
-            {
+        options={"py2exe":
+                     {"optimize": 2, 
+                      "packages" : ['evec_upload'],
+                      }
+                 },
+        windows= [ {
                 "script": "src/uploader.py",
                 "icon_resources": [(1, "images/evec_all.ico")] ,
-                "other_resources": [(24,1,manifest)]
                 }
             ]
         )
+
 elif sys.platform == 'darwin':
     from setuptools import setup
     buildstyle = 'app'

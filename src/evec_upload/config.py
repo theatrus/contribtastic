@@ -22,20 +22,21 @@ import wx
 import os
 import pickle
 
+from win32com.shell import shell, shellcon
 
 def find_first_path(path):
     return os.listdir(path)[0]
 
 def default_location():
     if sys.platform == 'win32':
-        from win32com.shell import shell, shellcon
+
         document_folder = "c:/"
         try:
             document_folder = os.path.join( shell.SHGetFolderPath( 0, shellcon.CSIDL_LOCAL_APPDATA, 0, 0 ), 'CCP', 'EVE', )
             document_folder = os.path.join ( document_folder, find_first_path(document_folder), 'cache', 'MachoNet', '87.237.38.200')
             document_folder = os.path.join ( document_folder, find_first_path(document_folder), 'CachedMethodCalls')
         except:
-            print "Failed to load the document folder"
+            pass
     elif sys.platform == 'darwin':
         from Carbon import Folder, Folders
         folderref = Folder.FSFindFolder( Folders.kUserDomain, Folders.kPreferencesFolderType, False )
