@@ -266,7 +266,8 @@ class MainFrame(wx.Frame):
                            defaultPath=default_location() )
 
         if dlg.ShowModal() == wx.ID_OK:
-            config_obj['evepath'] = dlg.GetPath()
+            print os.path.abspath(dlg.GetPath())
+            config_obj['evepath'][0] = os.path.abspath(dlg.GetPath())
             config_obj['path_set'] = True
 
         self.load_infowidgets()

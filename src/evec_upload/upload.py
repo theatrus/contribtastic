@@ -29,6 +29,7 @@ import wx.lib.newevent
 
 from threading import Thread
 import evecache
+from evec_upload.config import Config
 
 
 ProgramVersion = 2000
@@ -136,7 +137,7 @@ def upload_data(job):
 
     dirl = []
     upcount = 0
-
+    print "Using path ",job.path
     try:
         dirl = os.listdir(job.path)
     except:
@@ -172,7 +173,7 @@ def upload_data(job):
             csvOutput.close()
             evt = UpdateUploadEvent(typename = str(type), success = True)
             wx.PostEvent(job.win, evt)
-        except Excetion e:
+        except Excetion,e:
             print e
 
     config['last_upload_time'] = highest_timestamp
