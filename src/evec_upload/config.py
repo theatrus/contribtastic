@@ -1,5 +1,5 @@
 # python
-#    EVE-Central.com MarketUploader
+#    EVE-Central.com Contribtastic
 #    Copyright (C) 2005-2010 Yann Ramin
 #
 #    This program is free software; you can redistribute it and/or modify

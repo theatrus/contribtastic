@@ -1,6 +1,6 @@
 # python
-#    EVE-Central.com MarketUploader
-#    Copyright (C) 2005-2008 Yann Ramin
+#    EVE-Central.com Contribtastic
+#    Copyright (C) 2005-2010 Yann Ramin
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -242,7 +242,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, evt):
         global ProgramVersionNice
-        dlg = wx.MessageDialog(self, 'EVE-Central.com MarketUploader ' + ProgramVersionNice +"\n(c) 2006-2010 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
+        dlg = wx.MessageDialog(self, 'Contribtastic! ' + ProgramVersionNice +"\n(c) 2006-2010 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
                                wx.OK
                                )
         dlg.ShowModal()
@@ -303,7 +303,7 @@ def get_charuploads(userid):
 class EVEc_Upload(wx.App):
     def OnInit(self):
 
-        frame = MainFrame(None, "EVE-Central.com MarketUploader")
+        frame = MainFrame(None, "Contribtastic!")
         self.SetTopWindow(frame)
 
 

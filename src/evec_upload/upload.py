@@ -1,5 +1,5 @@
-#    EVE-Central.com MarketUploader
-#    Copyright (C) 2005-2008 Yann Ramin
+#    EVE-Central.com Contribtastic
+#    Copyright (C) 2005-2010 Yann Ramin
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by

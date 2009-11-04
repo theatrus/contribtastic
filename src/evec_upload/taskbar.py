@@ -1,6 +1,6 @@
-# python
-#    EVE-Central.com MarketUploader
-#    Copyright (C) 2005-2006 Yann Ramin
+#!/usr/bin/env python
+#    EVE-Central.com Contribtastic
+#    Copyright (C) 2005-2010 Yann Ramin
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class TaskBarIcon(wx.TaskBarIcon):
 
         # Set the image
         icon = self.MakeIcon(images.getIconImage())
-        self.SetIcon(icon, "EVE-Central MarketUploader")
+        self.SetIcon(icon, "Contribtastic!")
         self.imgidx = 1
 
         # bind some events
@@ -53,12 +53,12 @@ class TaskBarIcon(wx.TaskBarIcon):
         the base class takes care of the rest.
         """
         menu = wx.Menu()
-        menu.Append(self.TBMENU_RESTORE, "Restore MarketUploader")
-        menu.Append(self.TBMENU_CLOSE,   "Hide MarketUploader")
+        menu.Append(self.TBMENU_RESTORE, "Restore Contribtastic")
+        menu.Append(self.TBMENU_CLOSE,   "Hide Contribtastic")
         menu.AppendSeparator()
         menu.Append(self.TBMENU_REMOVE, "Remove from taskbar")
         menu.AppendSeparator()
-        menu.Append(self.TBMENU_QUIT, "Quit MarketUploader")
+        menu.Append(self.TBMENU_QUIT, "Quit Contribtastic")
 #        menu.Append(self.TBMENU_CHANGE, "Change the TB Icon")
 
         return menu
