@@ -78,7 +78,7 @@ class MainFrame(wx.Frame):
 
 
 
-        self.upload_thread = UploadThread(job)
+        self.upload_thread = UploadThread()
         self.upload_thread.start()
 
 
@@ -240,6 +240,7 @@ class MainFrame(wx.Frame):
         if evt.success == True:
             self.SetStatusText("Idle - Uploaded " + `evt.count` + " last run")
             self.scans += 1
+            self.load_infowidgets()
         else:
             self.SetStatusText("Error scanning directory! Check EVE path!")
 

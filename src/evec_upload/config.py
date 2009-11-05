@@ -21,6 +21,7 @@ import sys
 import wx
 import os
 import pickle
+import time
 
 from win32com.shell import shell, shellcon
 
@@ -84,7 +85,7 @@ class Config(object):
                             'evepath' : loc,
                             'character_name' : 'Anonymous',
                             'character_id' : 0,
-                            'last_upload_time' : 0
+                            'last_upload_time' : time.time()
                             }
 
     def save_config(self):

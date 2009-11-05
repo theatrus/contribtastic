@@ -51,7 +51,6 @@ class UploadPayload(object):
 class UploadThread(Thread):
     def __init__(self):
         Thread.__init__(self)
-        self.payload = payload
         self.setDaemon(False)
         self.queue = Queue()
 
