@@ -23,19 +23,38 @@ import os
 import pickle
 import time
 
-from win32com.shell import shell, shellcon
+try:
+    from win32com.shell import shell, shellcon
+except:
+    pass
 
-def find_first_path(path):
-    return os.listdir(path)[0]
+
+def find_first_path(path, pref = None):
+    dirlist = os.listdir(path)
+
+    if pref is None:
+        return dirlist[0]
+
+    for p in pref:
+        if p in dirlist or unicode(p) in dirlist:
+            return p
+    return dirlist[0]
+
 
 def default_location():
     if sys.platform == 'win32':
 
         document_folder = "c:/"
         try:
-            document_folder = os.path.join( shell.SHGetFolderPath( 0, shellcon.CSIDL_LOCAL_APPDATA, 0, 0 ), 'CCP', 'EVE', )
-            document_folder = os.path.join ( document_folder, find_first_path(document_folder), 'cache', 'MachoNet', '87.237.38.200')
-            document_folder = os.path.join ( document_folder, find_first_path(document_folder), 'CachedMethodCalls')
+            document_folder = os.path.join( shell.SHGetFolderPath( 0,
+                                                                   shellcon.CSIDL_LOCAL_APPDATA,
+                                                                   0, 0 ), 'CCP', 'EVE', )
+            document_folder = os.path.join ( document_folder,
+                                             find_first_path(document_folder, ['219', '220']),
+                                             'cache', 'MachoNet', '87.237.38.200')
+            document_folder = os.path.join ( document_folder,
+                                             find_first_path(document_folder), 'CachedMethodCalls')
+
         except:
             pass
     elif sys.platform == 'darwin':

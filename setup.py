@@ -24,7 +24,7 @@ if sys.platform == 'win32' or sys.platform == 'linux2':
 
     setup(
         options={"py2exe":
-                     {"optimize": 2, 
+                     {"optimize": 2,
                       "compressed" : False,
                       "packages" : ['evec_upload'],
                       "dll_excludes" : ['powrprof.dll', 'api-ms-win-core-localregistry-l1-1-0.dll', 'api-ms-win-core-processthreads-l1-1-0.dll', 'api-ms-win-security-base-l1-1-0.dll']
@@ -33,7 +33,6 @@ if sys.platform == 'win32' or sys.platform == 'linux2':
         windows= [ {
                 "script": "src/uploader.py",
                 "icon_resources": [(1, "images/evec_all.ico")] ,
-                
                 }
             ]
         )

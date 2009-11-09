@@ -1,4 +1,4 @@
-# python
+#!/usr/bin/env python
 #    EVE-Central.com Contribtastic
 #    Copyright (C) 2005-2010 Yann Ramin
 #
