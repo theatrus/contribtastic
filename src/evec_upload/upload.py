@@ -102,47 +102,7 @@ def perform_upload(typename, lines, userid, times, cache = False, region = 0, ty
     print h.read() # Gobble up result
     h.close()
 
-def check_csv(dirl):
-    upcount = 0
-    for item in dirl:
-        # Old style CSV uploader
-        if item[-3:] == "txt" and item != "readme.txt" and item.find("My orders")  == -1:
-            # Found file
-            filename = item
-            upcount = upcount + 1
-            typename = None
-            times = 0
-            try:
-                # Bad check for hyphenated names
-                s = item.split('-')
-                if len(s) > 3:
-                    typename = s[1] + "-" + s[2]
-                    times = s[3]
-                else:
-                    typename = s[1]
-                    times = s[2]
-            except:
-                # This isn't a valid item it seems like
-                continue
 
-            fileh = open( os.path.normpath( os.path.join( job.path, item ) ) )
-            lines = ""
-            linecount = 0
-            for line in fileh.readlines():
-                line.replace("\r", "")
-                lines = lines + line
-                linecount = linecount + 1
-
-            fileh.close()
-            perform_upload(typename, lines, job.userid, times, False)
-            evt = UpdateUploadEvent(typename = typename, success = True)
-            wx.PostEvent(job.win, evt)
-
-            if job.backup:
-                os.renames( os.path.normpath (os.path.join(job.path, filename)), os.path.normpath( os.path.join (job.path, job.backup, filename) ) )
-            else:
-                os.remove( os.path.normpath( os.path.join( job.path, item ) ) )
-        return upcount
 
 
 def upload_data(job):
@@ -160,19 +120,27 @@ def upload_data(job):
     config = Config()
 
     highest_timestamp = config['last_upload_time']
-    start_ts = config['last_upload_time']
+    if highest_timestamp <= 1:
+        highest_timestamp = time.time() # Major error, do something vaguely intelligent
+
+    start_ts = highest_timestamp
     print "UPLOAD START: TIMESTAMP CHECK IS > ",start_ts
+
     for item in dirl:
         if item[-6:] != ".cache":
             continue
         item = os.path.join(job.path, item)
         statinfo = os.stat(item)
+
         if statinfo.st_mtime <= start_ts:
             print "IGNORE:",item
             continue
+
         if statinfo.st_mtime > highest_timestamp:
             highest_timestamp = statinfo.st_mtime
+
         print item, statinfo.st_mtime, highest_timestamp
+
         try:
             market_parser = evecache.MarketParser(str(item))
             if market_parser.valid() == True:
@@ -209,13 +177,6 @@ def upload_data(job):
             print e
 
     config['last_upload_time'] = highest_timestamp
-
-
-
-
-
-    upcount += check_csv(dirl)
-
 
     evt = DoneUploadEvent(count = upcount, success = True)
     wx.PostEvent(job.win, evt)
