@@ -134,20 +134,20 @@ class Config(object):
         wx.GetApp().SetAppName("EVE-Central MarketUploader")
         path = sp.GetUserLocalDataDir()
         ret = 0
+
+        file = None
         try:
             file = open( os.path.normpath( os.path.join( path, 'data.pickle' ) ), "r")
             ret = 0
             self.config_obj = pickle.load(file)
-
         except:
             if file:
                 file.close()
                 file = None
-                
+
             self.default_data()
             self.save_config()
             return -1
-        
         finally:
             if file:
                 file.close()
