@@ -50,7 +50,7 @@ def default_location():
                                                                    shellcon.CSIDL_LOCAL_APPDATA,
                                                                    0, 0 ), 'CCP', 'EVE', )
             document_folder = os.path.join ( document_folder,
-                                             find_first_path(document_folder, ['232']),
+                                             find_first_path(document_folder, ['237', '236', '235']),
                                              'cache', 'MachoNet', '87.237.38.200')
             document_folder = os.path.join ( document_folder,
                                              find_first_path(document_folder), 'CachedMethodCalls')
