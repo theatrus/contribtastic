@@ -31,6 +31,9 @@ import images
 import urllib
 
 
+import wx.lib.newevent
+(UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
+(DoneUploadEvent, EVT_DONE_UPLOAD) = wx.lib.newevent.NewEvent()
 
 
 class MainFrame(wx.Frame):
@@ -81,7 +84,20 @@ class MainFrame(wx.Frame):
         self.upload_thread = UploadThread()
         self.upload_thread.start()
 
+        def donecb(count, success, this=self):
+            #print "DONE: %i, %s" % (count, success,)
+            evt = DoneUploadEvent(count = count, success = success)
+            wx.PostEvent(this, evt)
+        self.donecb = donecb
+	    
+        def updcb(typename, success, this=self):
+            #print "UPD: %s, %s" % (typename, success,)
+            evt = UpdateUploadEvent(typename = typename, success = success)
+            wx.PostEvent(this, evt)
+        self.updcb = updcb
 
+	config = Config()			
+        self.uploader = get_uploader(config, updcb)
 
         # Set icon
 
@@ -257,8 +273,7 @@ class MainFrame(wx.Frame):
         config_obj = Config()
         self.SetStatusText("Uploading...")
 
-        job = UploadPayload(config_obj['evepath'][0], self,
-                            config_obj['character_id'], config_obj['backup'])
+        job = UploadPayload(config_obj['evepath'][0], self.uploader, self.donecb)
         self.upload_thread.trigger(job)
 
 

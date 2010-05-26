@@ -122,10 +122,13 @@ class Config(object):
         self.config_obj = { 'version' : Config.CONFIG_VERSION,
                             'path_set' : False,
                             'backup' : 'backup',
+                            'upl_maxthreads' : 2,
+                            'upl_scale' : 100,
+                            'em_token' : '21E34B5ADA0',
                             'evepath' : loc,
                             'character_name' : 'Anonymous',
                             'character_id' : 0,
-                            'last_upload_time' : time.time()
+                            'last_upload_time' : 0,
                             }
 
     def save_config(self):

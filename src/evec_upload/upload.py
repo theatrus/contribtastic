@@ -23,9 +23,7 @@ import sys
 import urllib
 import stat
 from cStringIO import StringIO
-
-import wx
-import wx.lib.newevent
+import time
 
 from threading import Thread
 from Queue import Queue
@@ -37,21 +35,17 @@ ProgramVersion = 2000
 ProgramVersionNice = "2.0"
 CheckVersion = 1031
 
-(UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
-(DoneUploadEvent, EVT_DONE_UPLOAD) = wx.lib.newevent.NewEvent()
-
 
 class UploadPayload(object):
-    def __init__(self, path, win, userid, backup):
+    def __init__(self, path, uploader, donecb):
         self.path = path
-        self.win = win
-        self.userid = userid
-        self.backup = backup
+        self.uploader = uploader
+        self.donecb = donecb
 
 class UploadThread(Thread):
     def __init__(self):
         Thread.__init__(self)
-        self.setDaemon(False)
+        self.setDaemon(True)
         self.queue = Queue()
 
     def trigger(self, payload):
@@ -93,35 +87,30 @@ def check_client():
         return True
 
 
-def perform_upload(typename, lines, userid, times, cache = False, region = 0, typeid = 0):
-    submitdata = urllib.urlencode({'typename' : typename, 'data' : lines,
-                                   'userid': userid , 'timestamp': times, 'cache': cache,
-                                   'region' : region, 'typeid' : typeid})
 
-    h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
-    print h.read() # Gobble up result
-    h.close()
-
-
-
-
+seen = {}
 def upload_data(job):
 
     dirl = []
     upcount = 0
 
+    firstrun = 0
+    if not seen:
+	firstrun = 1
+
     try:
         dirl = os.listdir(job.path)
     except:
-        evt = DoneUploadEvent(count = upcount, success = False)
-        wx.PostEvent(job.win, evt)
+        if job.donecb:
+            self.donecb(count = upcount, success = False)
         return None
 
     config = Config()
 
     highest_timestamp = config['last_upload_time']
-    if highest_timestamp <= 1:
-        highest_timestamp = time.time() # Major error, do something vaguely intelligent
+    one_hour_ago = time.time() - 60*60
+    if highest_timestamp < one_hour_ago:
+        highest_timestamp = one_hour_ago
 
     start_ts = highest_timestamp
     print "UPLOAD START: TIMESTAMP CHECK IS > ",start_ts
@@ -132,8 +121,13 @@ def upload_data(job):
         item = os.path.join(job.path, item)
         statinfo = os.stat(item)
 
-        if statinfo.st_mtime <= start_ts:
-            print "IGNORE:",item
+        if seen.get(item,-1) == statinfo.st_mtime:
+#            print "IGNORE_SEEN:",item
+            continue
+        seen[item] = statinfo.st_mtime
+
+        if firstrun and statinfo.st_mtime <= start_ts:
+#            print "IGNORE_TS:",item
             continue
 
         if statinfo.st_mtime > highest_timestamp:
@@ -144,7 +138,7 @@ def upload_data(job):
         try:
             market_parser = evecache.MarketParser(str(item))
             if market_parser.valid() == True:
-                print "Valid"
+#                print "Valid"
                 entries = market_parser.getList()
 
                 region = entries.region()
@@ -158,18 +152,8 @@ def upload_data(job):
                 for order in orders2:
                     orders.append(order)
 
-                print "Upload of ",typeid,region
-                csvOutput = StringIO()
-                print >>csvOutput, "CACHE GENERATED FILE HEADER"
-                for order in orders:
-                    print >>csvOutput, order.toCsv()
+		job.uploader.do(orders, region, typeid, statinfo.st_mtime)
 
-                #print csvOutput.getvalue()
-                perform_upload("", csvOutput.getvalue(), job.userid, statinfo.st_mtime,
-                               True, region = region, typeid = typeid)
-                csvOutput.close()
-                evt = UpdateUploadEvent(typename = str(typeid), success = True)
-                wx.PostEvent(job.win, evt)
                 upcount += 1
             else:
                 print "Not valid"
@@ -178,8 +162,7 @@ def upload_data(job):
 
     config['last_upload_time'] = highest_timestamp
 
-    evt = DoneUploadEvent(count = upcount, success = True)
-    wx.PostEvent(job.win, evt)
-
+    if job.donecb:
+        job.donecb(count = upcount, success = True)
 
     return upcount
