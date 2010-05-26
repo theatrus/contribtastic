@@ -18,7 +18,6 @@
 
 
 import sys
-import wx
 import os
 import pickle
 import time
@@ -75,8 +74,30 @@ class Config(object):
 
     def __init__(self):
         self.config_obj = {}
-        self.reinit = self.load_config()
 
+        self.filename = ""
+	try:
+            import wx
+            sp = wx.StandardPaths.Get()
+            wx.GetApp().SetAppName("EVE-Central MarketUploader")
+            path = sp.GetUserLocalDataDir()
+
+            try:
+                os.mkdir(path)
+            except:
+                pass
+
+            self.filename = os.path.normpath( os.path.join( path, 'data.pickle' ) )
+	except:
+            pass
+
+        if not len(self.filename):
+            try:
+                self.filename = os.path.normpath( os.path.join( os.environ['HOME'], '.contribtastic.pickle' ) )
+            except:
+                pass
+
+        self.reinit = self.load_config()
 
     def __getitem__(self, key):
         return self.config_obj[key]
@@ -109,17 +130,8 @@ class Config(object):
 
     def save_config(self):
 
-        sp = wx.StandardPaths.Get()
-        wx.GetApp().SetAppName("EVE-Central MarketUploader")
-        path = sp.GetUserLocalDataDir()
 
-
-        try:
-            os.mkdir(path)
-        except:
-            pass
-
-        file = open( os.path.normpath( os.path.join( path, 'data.pickle' ) ), "w")
+        file = open( self.filename, "w")
 
         pickle.dump(self.config_obj, file)
 
@@ -130,14 +142,10 @@ class Config(object):
     def load_config(self):
 
 
-        sp = wx.StandardPaths.Get()
-        wx.GetApp().SetAppName("EVE-Central MarketUploader")
-        path = sp.GetUserLocalDataDir()
         ret = 0
-
         file = None
         try:
-            file = open( os.path.normpath( os.path.join( path, 'data.pickle' ) ), "r")
+            file = open( self.filename, "r")
             ret = 0
             self.config_obj = pickle.load(file)
         except:
