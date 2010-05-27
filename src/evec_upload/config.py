@@ -48,12 +48,24 @@ def default_location():
             document_folder = os.path.join( shell.SHGetFolderPath( 0,
                                                                    shellcon.CSIDL_LOCAL_APPDATA,
                                                                    0, 0 ), 'CCP', 'EVE', )
-            document_folder = os.path.join ( document_folder,
-                                             find_first_path(document_folder, ['237', '236', '235']),
-                                             'cache', 'MachoNet', '87.237.38.200')
-            document_folder = os.path.join ( document_folder,
-                                             find_first_path(document_folder), 'CachedMethodCalls')
+	    import os.path
+            import re
+            rex = re.compile('/cache/MachoNet/87\.237\.38\.200/[0-9]+/CachedMethodCalls$')
+            def walker(arg, dirname, fnames):
+                if not rex.search(dirname):
+                    return
+                mt = os.path.getmtime(dirname)
+#                print "DIR: %s - mtime %u" % (dirname, mt,)
+                if mt > arg['ts']:
+                    arg['ts'] = mt
+                    arg['path'] = dirname
 
+            best = { 'ts':0, 'path':"", }
+            os.path.walk(document_folder, walker, best)
+
+            print "BEST: %s" % (best['path'],)
+            if len(best['path']):
+                document_folder = best['path']
         except:
             pass
     elif sys.platform == 'darwin':
