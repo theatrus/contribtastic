@@ -81,7 +81,7 @@ def default_location():
 
 class Config(object):
 
-    CONFIG_VERSION = '2.0-alpha1'
+    CONFIG_VERSION = '2.0-alpha6'
 
 
     def __init__(self):
@@ -144,15 +144,9 @@ class Config(object):
                             }
 
     def save_config(self):
-
-
         file = open( self.filename, "w")
-
         pickle.dump(self.config_obj, file)
-
         file.close()
-
-
 
     def load_config(self):
 

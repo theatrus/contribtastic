@@ -17,6 +17,7 @@
 #    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 from evec_upload.upload import *
+from evec_upload.uploader import get_uploader
 from evec_upload.taskbar import *
 import evec_upload.login
 import evec_upload.options

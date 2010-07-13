@@ -32,7 +32,7 @@ from Queue import Queue
 import evecache
 
 from evec_upload.config import Config
-config = Config()
+
 
 ProgramVersion = 2000
 ProgramVersionNice = "2.0"
@@ -42,6 +42,7 @@ CheckVersion = 1031
 #(DoneUploadEvent, EVT_DONE_UPLOAD) = wx.lib.newevent.NewEvent()
 
 def get_uploader(cfg, updcb):
+    config = Config()
     upl = UploaderEC(identity=0, donecb=updcb)
     upl.start()
 
@@ -90,6 +91,7 @@ class UploaderMulti(object):
 
 class UploaderThread(Thread):
     def __init__(self, queue=None, donecb=None, identity=None):
+        config = Config()
         Thread.__init__(self)
         self.setDaemon(True)
 
@@ -175,9 +177,6 @@ class UploaderEC(UploaderThread):
                                    'timestamp': payload.timestamp, 'cache': True, 
                                    'region' : payload.regionid, 'typeid' : payload.typeid})
 
-#        h = urllib.urlopen("http://eve-central.com/datainput.py/inputdata", submitdata)
-#        print h.read() # Gobble up result
-#        h.close()
         import httplib
         conn = httplib.HTTPConnection(self.host)
         conn.request( "POST",

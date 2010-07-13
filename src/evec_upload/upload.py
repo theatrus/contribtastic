@@ -122,12 +122,10 @@ def upload_data(job):
         statinfo = os.stat(item)
 
         if seen.get(item,-1) == statinfo.st_mtime:
-#            print "IGNORE_SEEN:",item
             continue
         seen[item] = statinfo.st_mtime
 
         if firstrun and statinfo.st_mtime <= start_ts:
-#            print "IGNORE_TS:",item
             continue
 
         if statinfo.st_mtime > highest_timestamp:
