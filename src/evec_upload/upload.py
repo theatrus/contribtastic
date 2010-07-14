@@ -28,7 +28,7 @@ import time
 from threading import Thread
 from Queue import Queue
 import evecache
-from evec_upload.config import Config
+from evec_upload.config import Config, documents_path
 
 
 ProgramVersion = 2000
@@ -87,7 +87,15 @@ def check_client():
         return True
 
 
+def make_csv_file(orders, region, typeid, timestamp):
+    config = Config()
+    filename = os.path.join(documents_path, str(region) + "-" + str(typeid) + ".csv")
+    with open(filename, 'w') as f:
+        print >>f, orders
+    return
 
+
+# Local cache of currently seen files
 seen = {}
 def upload_data(job):
 
@@ -149,6 +157,9 @@ def upload_data(job):
                     orders.append(order)
                 for order in orders2:
                     orders.append(order)
+
+                if config['backup']:
+                    make_csv_file(orders, region, typeid, statinfo.st_mtime)
 
 		job.uploader.do(orders, region, typeid, statinfo.st_mtime)
 

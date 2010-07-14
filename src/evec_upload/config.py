@@ -21,6 +21,8 @@ import sys
 import os
 import pickle
 import time
+import os.path
+import re
 
 try:
     from win32com.shell import shell, shellcon
@@ -40,7 +42,20 @@ def find_first_path(path, pref = None):
     return dirlist[0]
 
 
+def documents_path():
+
+    document_folder = os.path.join( shell.SHGetFolderPath( 0,
+                                                           shellcon.CSIDL_PERSONAL,
+                                                           0, 0 ), 'EVE-Central CSV', )
+    try:
+        os.makedirs(document_folder)
+    except:
+        pass
+    return document_folder
+
+
 def default_location():
+    # Platform specific logic for finding the cache folder
     if sys.platform == 'win32':
 
         document_folder = "c:/"
@@ -48,27 +63,10 @@ def default_location():
             document_folder = os.path.join( shell.SHGetFolderPath( 0,
                                                                    shellcon.CSIDL_LOCAL_APPDATA,
                                                                    0, 0 ), 'CCP', 'EVE', )
-	    import os.path
-            import re
-            rex = re.compile('/cache/MachoNet/87\.237\.38\.200/[0-9]+/CachedMethodCalls$')
-            def walker(arg, dirname, fnames):
-                if not rex.search(dirname):
-                    return
-                mt = os.path.getmtime(dirname)
-#                print "DIR: %s - mtime %u" % (dirname, mt,)
-                if mt > arg['ts']:
-                    arg['ts'] = mt
-                    arg['path'] = dirname
-
-            best = { 'ts':0, 'path':"", }
-            os.path.walk(document_folder, walker, best)
-
-            print "BEST: %s" % (best['path'],)
-            if len(best['path']):
-                document_folder = best['path']
         except:
             pass
     elif sys.platform == 'darwin':
+
         from Carbon import Folder, Folders
         folderref = Folder.FSFindFolder( Folders.kUserDomain, Folders.kPreferencesFolderType, False )
         document_folder = os.path.join( folderref.as_pathname(), 'Eve Online Preferences', 'p_drive', 'My Documents', 'EVE', 'logs', 'MarketLogs' )
@@ -76,13 +74,30 @@ def default_location():
         document_folder = '' # don't know what the linux client has
         document_folder = os.path.normpath( document_folder )
 
+    # Now try to find the most relevant cache folder
+
+    rex = re.compile('/cache/MachoNet/87\.237\.38\.200/[0-9]+/CachedMethodCalls$')
+    def walker(arg, dirname, fnames):
+        if not rex.search(dirname):
+            return
+        mt = os.path.getmtime(dirname)
+        if mt > arg['ts']:
+            arg['ts'] = mt
+            arg['path'] = dirname
+
+    best = { 'ts':0, 'path':"", }
+    os.path.walk(document_folder, walker, best)
+
+    print "BEST: %s" % (best['path'],)
+    if len(best['path']):
+        document_folder = best['path']
+
     return document_folder
 
 
 class Config(object):
 
     CONFIG_VERSION = '2.0-alpha6.1'
-
 
     def __init__(self):
         self.config_obj = {}
