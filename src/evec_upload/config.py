@@ -43,10 +43,14 @@ def find_first_path(path, pref = None):
 
 
 def documents_path():
+    # Platform specific logic for finding the cache folder
+    if sys.platform == 'win32':
+        document_folder = os.path.join( shell.SHGetFolderPath( 0,
+                                                               shellcon.CSIDL_PERSONAL,
+                                                               0, 0 ), 'EVE-Central CSV', )
+    else:
+        document_folder = os.path.abspath('~')
 
-    document_folder = os.path.join( shell.SHGetFolderPath( 0,
-                                                           shellcon.CSIDL_PERSONAL,
-                                                           0, 0 ), 'EVE-Central CSV', )
     try:
         os.makedirs(document_folder)
     except:
