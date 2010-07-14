@@ -81,7 +81,7 @@ def default_location():
 
 class Config(object):
 
-    CONFIG_VERSION = '2.0-alpha6'
+    CONFIG_VERSION = '2.0-alpha6.1'
 
 
     def __init__(self):
@@ -133,7 +133,7 @@ class Config(object):
 
         self.config_obj = { 'version' : Config.CONFIG_VERSION,
                             'path_set' : False,
-                            'backup' : 'backup',
+                            'backup' : False,
                             'upl_maxthreads' : 2,
                             'upl_scale' : 100,
                             'em_token' : '21E34B5ADA0',

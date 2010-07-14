@@ -24,10 +24,11 @@ import sys
 import images
 import urllib
 
-
+from evec_upload.config import Config
 
 class OptionDialog(wx.Dialog):
     def __init__(self, parent):
+        config = Config()
 
         wx.Dialog.__init__(self, parent, -1, "Options", style = wx.DEFAULT_DIALOG_STYLE)
 
@@ -38,11 +39,15 @@ class OptionDialog(wx.Dialog):
 
 
         self.backup = wx.CheckBox(self, -1, "Create CSV dumps the uploaded data")
+        self.backup.SetValue(config['backup'])
         sizer.Add(self.backup, 0, wx.ALL, 5)
 
         self.suggest = wx.CheckBox(self, -1, "Offer suggestions of what can be uploaded")
         sizer.Add(self.suggest, 0, wx.ALL, 5)
 
+        self.anon_cb = wx.CheckBox(self, -1, "Anonymous login - no username")
+        self.Bind(wx.EVT_CHECKBOX, self.OnAnonCb, self.anon_cb)
+        sizer.Add(self.anon_cb, 0, wx.ALL, 5)
 
         line = wx.StaticLine(self, -1, size=(20,-1), style=wx.LI_HORIZONTAL)
         sizer.Add(line, 0, wx.GROW|wx.ALIGN_CENTER_VERTICAL|wx.RIGHT|wx.TOP, 5)
@@ -93,3 +98,23 @@ class OptionDialog(wx.Dialog):
 
         self.SetSizer(sizer)
         sizer.Fit(self)
+
+        char_name = config['character_name']
+
+        if char_name == "Anonymous":
+            self.anon_cb.SetValue(True)
+            self.uname.Enable(False)
+            self.passwd.Enable(False)
+        else:
+            self.uname.SetValue(char_name)
+
+
+    def OnAnonCb(self, evt):
+        if self.uname.IsEnabled():
+            self.uname.Enable(False)
+        else:
+            self.uname.Enable(True)
+        if self.passwd.IsEnabled():
+            self.passwd.Enable(False)
+        else:
+            self.passwd.Enable(True)

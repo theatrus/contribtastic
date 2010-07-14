@@ -71,8 +71,8 @@ class MainFrame(wx.Frame):
 
 
         # Load config
-        c = Config()
-        r = c.reinit
+        config = Config()
+        r = config.reinit
         if r == -1:
             dlg = wx.MessageDialog(self, """The uploader client configuration has been reset since an old configuration file was found.
             Please check your configuration (such as user login and EVE path).""", 'Client Upgrade', wx.OK | wx.ICON_INFORMATION)
@@ -97,17 +97,13 @@ class MainFrame(wx.Frame):
             wx.PostEvent(this, evt)
         self.updcb = updcb
 
-	config = Config()			
         self.uploader = get_uploader(config, updcb)
 
         # Set icon
-
         self.SetIcon(images.getIconIcon())
 
         # Task Bar
-
         self.tbicon = TaskBarIcon(self)
-
 
         # Create the menubar
         menuBar = wx.MenuBar()
@@ -135,10 +131,6 @@ class MainFrame(wx.Frame):
 
         menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Exit")
 
-
-
-
-
         helpmenu.Append(self.MENU_ABOUT, "&About")
 
         # bind the menu event to an event handler
@@ -161,11 +153,7 @@ class MainFrame(wx.Frame):
         # Now create the Panel to put the other controls on.
         panel = wx.Panel(self)
 
-        # and a few controls
-        #        text = wx.StaticText(panel, -1, "EVE-Central.com MarketUploader")
-
         self.pathtext = wx.StaticText(panel, -1, "Please wait...")
-#        self.pathtext.Enable(False)
         self.pathtext_l = wx.StaticText(panel, -1, "Using folder:  ")
 
         self.usertext_l = wx.StaticText(panel, -1, "Character name:  ")
@@ -173,12 +161,10 @@ class MainFrame(wx.Frame):
 
         self.uploadtext = wx.StaticText(panel, -1, "")
 
-        config_obj = Config()
-
-        if config_obj['character_id'] == 0:
+        if config['character_id'] == 0:
             self.uploads = long(0)
         else:
-            self.uploads = get_charuploads(config_obj['character_id'])
+            self.uploads = get_charuploads(config['character_id'])
         self.scans = 0
 
 
@@ -227,17 +213,43 @@ class MainFrame(wx.Frame):
         self.load_infowidgets()
 
     def load_infowidgets(self):
-        config_obj = Config()
+        config = Config()
 
-        path = config_obj['evepath'][0]
+        path = config['evepath'][0]
         if (path):
             self.pathtext.SetLabel( path)
-        self.usertext.SetLabel(config_obj['character_name'])
+        self.usertext.SetLabel(config['character_name'])
         self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
 
     def OnOptions(self, evt):
+        config = Config()
         dlg = evec_upload.options.OptionDialog(self)
-        dlg.ShowModal()
+        r = dlg.ShowModal()
+        if r == wx.ID_OK:
+            config['backup'] = dlg.backup.GetValue()
+            if dlg.anon_cb.IsChecked():
+                config['character_name'] = "Anonymous"
+                config['character_id'] = 0
+            else:
+                v = get_charid(dlg.uname.GetValue(), dlg.passwd.GetValue())
+                if v == -1:
+                    dlge = wx.MessageDialog(self, 'User login information incorrect. Using old value', 'Bad login',
+                                           wx.OK | wx.ICON_ERROR
+                                           )
+                    dlge.ShowModal()
+                    dlge.Destroy()
+                else:
+                    config['character_id'] = v
+                    config['character_name'] = dlg.uname.GetValue()
+            config.save_config()
+            self.load_infowidgets()
+
+
+
+        else:
+            pass
+        dlg.Destroy()
+        
 
     def OnTimeToClose(self, evt):
         """Event handler for the button click."""
@@ -271,30 +283,29 @@ class MainFrame(wx.Frame):
 
 
     def OnTimer(self, evt):
-        config_obj = Config()
+        config = Config()
         self.SetStatusText("Uploading...")
 
-        job = UploadPayload(config_obj['evepath'][0], self.uploader, self.donecb)
+        job = UploadPayload(config['evepath'][0], self.uploader, self.donecb)
         self.upload_thread.trigger(job)
 
 
     def OnLocate(self, evt):
-        config_obj = Config()
+        config = Config()
         dlg = wx.DirDialog(self, "Please locate the cache folder",
                            style=wx.DD_DEFAULT_STYLE,
                            defaultPath=default_location() )
 
         if dlg.ShowModal() == wx.ID_OK:
             print os.path.abspath(dlg.GetPath())
-            config_obj['evepath'][0] = os.path.abspath(dlg.GetPath())
-            config_obj['path_set'] = True
+            config['evepath'][0] = os.path.abspath(dlg.GetPath())
+            config['path_set'] = True
 
+        config.save()
         self.load_infowidgets()
 
 
     def update_motd(self):
-
-
         motdf = urllib.urlopen("http://eve-central.com/motd.txt")
         motd = ""
         for line in motdf.readlines():

@@ -33,14 +33,6 @@ import evecache
 
 from evec_upload.config import Config
 
-
-ProgramVersion = 2000
-ProgramVersionNice = "2.0"
-CheckVersion = 1031
-
-#(UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
-#(DoneUploadEvent, EVT_DONE_UPLOAD) = wx.lib.newevent.NewEvent()
-
 def get_uploader(cfg, updcb):
     config = Config()
     upl = UploaderEC(identity=0, donecb=updcb)
