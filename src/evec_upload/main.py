@@ -125,7 +125,7 @@ class MainFrame(wx.Frame):
         menu.AppendSeparator()
 
 
-        menu.Append(self.MENU_SETTINGS, "&Settings...")
+        #menu.Append(self.MENU_SETTINGS, "&Settings...")
         menu.Append(self.MENU_LOCATE, "&Locate cache folder...")
 
 
@@ -136,7 +136,7 @@ class MainFrame(wx.Frame):
         # bind the menu event to an event handler
         self.Bind(wx.EVT_MENU, self.OnTimer, id=self.MENU_SCANNOW)
         self.Bind(wx.EVT_MENU, self.OnTimeToClose, id=wx.ID_EXIT)
-        self.Bind(wx.EVT_MENU, self.OnOptions, id=self.MENU_SETTINGS)
+        #self.Bind(wx.EVT_MENU, self.OnOptions, id=self.MENU_SETTINGS)
         self.Bind(wx.EVT_MENU, self.OnAbout, id = self.MENU_ABOUT)
         self.Bind(wx.EVT_MENU, self.OnLocate, id = self.MENU_LOCATE)
         self.Bind(wx.EVT_CLOSE, self.OnTimeToClose)
@@ -156,8 +156,8 @@ class MainFrame(wx.Frame):
         self.pathtext = wx.StaticText(panel, -1, "Please wait...")
         self.pathtext_l = wx.StaticText(panel, -1, "Using folder:  ")
 
-        self.usertext_l = wx.StaticText(panel, -1, "Character name:  ")
-        self.usertext = wx.StaticText(panel, -1, "...")
+        #self.usertext_l = wx.StaticText(panel, -1, "Character name:  ")
+        #self.usertext = wx.StaticText(panel, -1, "...")
 
         self.uploadtext = wx.StaticText(panel, -1, "")
 
@@ -185,8 +185,8 @@ class MainFrame(wx.Frame):
         sizer_path.Add(self.pathtext_l, 2, wx.EXPAND|wx.ALL, 1)
         sizer_path.Add(self.pathtext, 0, wx.ALL|wx.EXPAND, 1)
 
-        sizer_path.Add(self.usertext_l, 2, wx.EXPAND|wx.ALL, 1)
-        sizer_path.Add(self.usertext, 0, wx.ALL|wx.EXPAND, 1)
+        #sizer_path.Add(self.usertext_l, 2, wx.EXPAND|wx.ALL, 1)
+        #sizer_path.Add(self.usertext, 0, wx.ALL|wx.EXPAND, 1)
 
         #--
         sizer.Add(sizer_path, 0, wx.EXPAND | wx.ALL, 1)
@@ -218,7 +218,7 @@ class MainFrame(wx.Frame):
         path = config['evepath'][0]
         if (path):
             self.pathtext.SetLabel( path)
-        self.usertext.SetLabel(config['character_name'])
+        #self.usertext.SetLabel(config['character_name'])
         self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
 
     def OnOptions(self, evt):

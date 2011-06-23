@@ -1,6 +1,12 @@
 import sys
 
 print "Your platform is",sys.platform
+
+manifest = """
+
+"""
+
+
 sys.path.append('src')
 if sys.platform == 'win32' or sys.platform == 'linux2':
     from distutils.core import setup
@@ -27,14 +33,17 @@ if sys.platform == 'win32' or sys.platform == 'linux2':
                      {"optimize": 2,
                       "compressed" : False,
                       "packages" : ['evec_upload'],
-                      "dll_excludes" : ['powrprof.dll', 'api-ms-win-core-localregistry-l1-1-0.dll', 'api-ms-win-core-processthreads-l1-1-0.dll', 'api-ms-win-security-base-l1-1-0.dll']
+                      "dll_excludes" : ['powrprof.dll', 'api-ms-win-core-localregistry-l1-1-0.dll', 
+                                        'api-ms-win-core-processthreads-l1-1-0.dll', 'api-ms-win-security-base-l1-1-0.dll']
                       }
                  },
         windows= [ {
                 "script": "src/uploader.py",
-                "icon_resources": [(1, "images/evec_all.ico")] ,
+                #"icon_resources": [(1, "images/evec_all.ico")] ,
+                #"other_resources": [(24,1,manifest)]
                 }
-            ]
+            ],
+        data_files=["images/evec_all.ico"]
         )
 
 elif sys.platform == 'darwin':
