@@ -275,7 +275,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, evt):
         global ProgramVersionNice
-        dlg = wx.MessageDialog(self, 'Contribtastic! ' + ProgramVersionNice +"\n(c) 2006-2010 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
+        dlg = wx.MessageDialog(self, 'Contribtastic! ' + ProgramVersionNice +"\n(c) 2006-2011 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
                                wx.OK
                                )
         dlg.ShowModal()

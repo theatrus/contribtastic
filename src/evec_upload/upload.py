@@ -31,9 +31,9 @@ import evecache
 from evec_upload.config import Config, documents_path
 
 
-ProgramVersion = 2001
-ProgramVersionNice = "2.0.0"
-CheckVersion = 2001
+ProgramVersion = 2002
+ProgramVersionNice = "2.0.1"
+CheckVersion = 2002
 
 
 class UploadPayload(object):

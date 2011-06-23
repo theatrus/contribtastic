@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "Contribtastic"
-!define PRODUCT_VERSION "2.0.0"
+!define PRODUCT_VERSION "2.0.1"
 !define PRODUCT_PUBLISHER "StackFoundry LLC"
 !define PRODUCT_WEB_SITE "http://eve-central.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\uploader.exe"
