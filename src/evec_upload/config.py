@@ -101,7 +101,7 @@ def default_location():
 
 class Config(object):
 
-    CONFIG_VERSION = '2.0-alpha6.1'
+    CONFIG_VERSION = '2.0.0'
 
     def __init__(self):
         self.config_obj = {}
