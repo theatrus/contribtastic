@@ -57,8 +57,8 @@ class UploadThread(Thread):
             payload = self.queue.get()
             try:
                 upload_data(payload)
-            except Exception as e:
-                sys.stderr.write(e)
+            except:
+                pass # This is bad, I know.
 
 
 
