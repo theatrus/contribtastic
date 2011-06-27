@@ -301,7 +301,7 @@ class MainFrame(wx.Frame):
             config['evepath'][0] = os.path.abspath(dlg.GetPath())
             config['path_set'] = True
 
-        config.save()
+        config.save_config()
         self.load_infowidgets()
 
 
