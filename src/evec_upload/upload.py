@@ -31,9 +31,9 @@ import evecache
 from evec_upload.config import Config, documents_path
 
 
-ProgramVersion = 2002
-ProgramVersionNice = "2.0.1"
-CheckVersion = 2002
+ProgramVersion = 2003
+ProgramVersionNice = "2.0.3"
+CheckVersion = 2003
 
 
 class UploadPayload(object):
@@ -97,6 +97,7 @@ def make_csv_file(orders, region, typeid, timestamp):
 
 # Local cache of currently seen files
 seen = {}
+
 def upload_data(job):
 
     dirl = []
@@ -104,7 +105,7 @@ def upload_data(job):
 
     firstrun = 0
     if not seen:
-	firstrun = 1
+        firstrun = 1
 
     try:
         dirl = os.listdir(job.path)
@@ -144,7 +145,6 @@ def upload_data(job):
         try:
             market_parser = evecache.MarketParser(str(item))
             if market_parser.valid() == True:
-#                print "Valid"
                 entries = market_parser.getList()
 
                 region = entries.region()
@@ -161,7 +161,7 @@ def upload_data(job):
                 if config['backup']:
                     make_csv_file(orders, region, typeid, statinfo.st_mtime)
 
-		job.uploader.do(orders, region, typeid, statinfo.st_mtime)
+                job.uploader.do(orders, region, typeid, statinfo.st_mtime)
 
                 upcount += 1
             else:
