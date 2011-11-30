@@ -23,6 +23,7 @@ import pickle
 import time
 import os.path
 import re
+import threading
 
 try:
     from win32com.shell import shell, shellcon
@@ -67,7 +68,8 @@ def default_location():
             document_folder = os.path.join( shell.SHGetFolderPath( 0,
                                                                    shellcon.CSIDL_LOCAL_APPDATA,
                                                                    0, 0 ), 'CCP', 'EVE', )
-        except:
+        except Exception,e:
+            print e
             pass
     elif sys.platform == 'darwin':
 
@@ -80,9 +82,10 @@ def default_location():
 
     # Now try to find the most relevant cache folder
 
-    rex = re.compile('/cache/MachoNet/87\.237\.38\.200/[0-9]+/CachedMethodCalls$')
+    print "Starting to scan from ",document_folder
+    rex = re.compile('cache/MachoNet/87\.237\.38\.200/[0-9]+/CachedMethodCalls$')
     def walker(arg, dirname, fnames):
-        if not rex.search(dirname):
+        if not rex.search(dirname.replace('\\', '/')):
             return
         mt = os.path.getmtime(dirname)
         if mt > arg['ts']:
@@ -101,13 +104,15 @@ def default_location():
 
 class Config(object):
 
-    CONFIG_VERSION = '2.0.0'
+    CONFIG_VERSION = '2.0.3'
+    LOCK = threading.Lock()
+    CONFIG_OBJ = {}
 
     def __init__(self):
-        self.config_obj = {}
+        self.config_obj = Config.CONFIG_OBJ
 
         self.filename = ""
-	try:
+        try:
             import wx
             sp = wx.StandardPaths.Get()
             wx.GetApp().SetAppName("EVE-Central MarketUploader")
@@ -119,7 +124,7 @@ class Config(object):
                 pass
 
             self.filename = os.path.normpath( os.path.join( path, 'data.pickle' ) )
-	except:
+        except:
             pass
 
         if not len(self.filename):
@@ -128,14 +133,22 @@ class Config(object):
             except:
                 pass
 
-        self.reinit = self.load_config()
+        if len(self.config_obj) <= 0: # This is a blank config, reload it
+            self.reinit = self.load_config()
+        else:
+            self.reinit = 0
 
     def __getitem__(self, key):
-        return self.config_obj[key]
+        Config.LOCK.acquire()
+        i = self.config_obj[key]
+        Config.LOCK.release()
+        return i
 
     def __setitem__(self, key, value):
+        Config.LOCK.acquire()
         ret =  self.config_obj[key] = value
         self.save_config()
+        Config.LOCK.release()
         return ret
 
     def __len__(self):
@@ -150,17 +163,16 @@ class Config(object):
         loc = default_location()
         loc = [loc]
 
-        self.config_obj = { 'version' : Config.CONFIG_VERSION,
+        self.config_obj.update({ 'version' : Config.CONFIG_VERSION,
                             'path_set' : False,
                             'backup' : False,
-                            'upl_maxthreads' : 2,
+                            'upl_maxthreads' : 1,
                             'upl_scale' : 100,
-                            'em_token' : '21E34B5ADA0',
                             'evepath' : loc,
                             'character_name' : 'Anonymous',
                             'character_id' : 0,
                             'last_upload_time' : 0,
-                            }
+                            })
 
     def save_config(self):
         file = open( self.filename, "w")
@@ -169,14 +181,14 @@ class Config(object):
 
     def load_config(self):
 
-
         ret = 0
         file = None
         try:
             file = open( self.filename, "r")
             ret = 0
-            self.config_obj = pickle.load(file)
-        except:
+            self.config_obj.update(pickle.load(file))
+        except Exception, e:
+            print e
             if file:
                 file.close()
                 file = None

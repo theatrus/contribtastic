@@ -43,22 +43,22 @@ class UploaderPayload(object):
         self.body = body
         self.regionid = regionid
         self.typeid = typeid
-	self.timestamp = timestamp
+        self.timestamp = timestamp
 
 
 class UploaderMulti(object):
     def __init__(self):
-	self.uploaders = []
+        self.uploaders = []
 
     def add(self, uploader):
-	self.uploaders.append(uploader)
+        self.uploaders.append(uploader)
 
     def do(self, orders, regionid, typeid, timestamp,):
-	for upl in self.uploaders:
+        for upl in self.uploaders:
             upl.do(orders, regionid, typeid, timestamp)
 
     def trigger(self, payload):
-	for upl in self.uploaders:
+        for upl in self.uploaders:
             upl.trigger(payload)
 
     def start(self):

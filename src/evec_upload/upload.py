@@ -117,7 +117,7 @@ def upload_data(job):
     config = Config()
 
     highest_timestamp = config['last_upload_time']
-    one_hour_ago = time.time() - 60*60
+    one_hour_ago = time.time() - 15*60 # 15 min ago
     if highest_timestamp < one_hour_ago:
         highest_timestamp = one_hour_ago
 

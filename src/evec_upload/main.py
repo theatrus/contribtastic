@@ -74,8 +74,7 @@ class MainFrame(wx.Frame):
         config = Config()
         r = config.reinit
         if r == -1:
-            dlg = wx.MessageDialog(self, """The uploader client configuration has been reset since an old configuration file was found.
-            Please check your configuration (such as user login and EVE path).""", 'Client Upgrade', wx.OK | wx.ICON_INFORMATION)
+            dlg = wx.MessageDialog(self, """The uploader client configuration has been reset since an old configuration file was found.    Please check your configuration (such as path).""", 'Client Upgrade', wx.OK | wx.ICON_INFORMATION)
             dlg.ShowModal()
             dlg.Destroy()
 
@@ -136,7 +135,6 @@ class MainFrame(wx.Frame):
         # bind the menu event to an event handler
         self.Bind(wx.EVT_MENU, self.OnTimer, id=self.MENU_SCANNOW)
         self.Bind(wx.EVT_MENU, self.OnTimeToClose, id=wx.ID_EXIT)
-        #self.Bind(wx.EVT_MENU, self.OnOptions, id=self.MENU_SETTINGS)
         self.Bind(wx.EVT_MENU, self.OnAbout, id = self.MENU_ABOUT)
         self.Bind(wx.EVT_MENU, self.OnLocate, id = self.MENU_LOCATE)
         self.Bind(wx.EVT_CLOSE, self.OnTimeToClose)
@@ -216,40 +214,11 @@ class MainFrame(wx.Frame):
         config = Config()
 
         path = config['evepath'][0]
-        if (path):
+        if path:
             self.pathtext.SetLabel( path)
-        #self.usertext.SetLabel(config['character_name'])
-        self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
-
-    def OnOptions(self, evt):
-        config = Config()
-        dlg = evec_upload.options.OptionDialog(self)
-        r = dlg.ShowModal()
-        if r == wx.ID_OK:
-            config['backup'] = dlg.backup.GetValue()
-            if dlg.anon_cb.IsChecked():
-                config['character_name'] = "Anonymous"
-                config['character_id'] = 0
-            else:
-                v = get_charid(dlg.uname.GetValue(), dlg.passwd.GetValue())
-                if v == -1:
-                    dlge = wx.MessageDialog(self, 'User login information incorrect. Using old value', 'Bad login',
-                                           wx.OK | wx.ICON_ERROR
-                                           )
-                    dlge.ShowModal()
-                    dlge.Destroy()
-                else:
-                    config['character_id'] = v
-                    config['character_name'] = dlg.uname.GetValue()
-            config.save_config()
-            self.load_infowidgets()
+            self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
 
 
-
-        else:
-            pass
-        dlg.Destroy()
-        
 
     def OnTimeToClose(self, evt):
         """Event handler for the button click."""
@@ -275,7 +244,7 @@ class MainFrame(wx.Frame):
 
     def OnAbout(self, evt):
         global ProgramVersionNice
-        dlg = wx.MessageDialog(self, 'Contribtastic! ' + ProgramVersionNice +"\n(c) 2006-2011 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
+        dlg = wx.MessageDialog(self, 'Contribtastic! ' + ProgramVersionNice +"\n(c) 2006-2012 Yann Ramin. All Rights Reserved.\n\nSee EVE-Central.com for the latest updates and information.", 'About',
                                wx.OK
                                )
         dlg.ShowModal()
@@ -293,8 +262,7 @@ class MainFrame(wx.Frame):
     def OnLocate(self, evt):
         config = Config()
         dlg = wx.DirDialog(self, "Please locate the cache folder",
-                           style=wx.DD_DEFAULT_STYLE,
-                           defaultPath=default_location() )
+                           style=wx.DD_DEFAULT_STYLE, )
 
         if dlg.ShowModal() == wx.ID_OK:
             print os.path.abspath(dlg.GetPath())
