@@ -66,6 +66,12 @@ Section "Program Files" SEC01
   File "dist\library.zip"
   File "dist\*.dll"
   File "dist\*.pyd"
+  File "vcredist_x86_2008.exe"
+  File "vcredist_x86_2010_sp1.exe"
+
+  ExecWait '"vcredist_x86_2008.exe" /q:a /c:"VCREDI~1.EXE /q:a /c:""msiexec /i vcredist.msi /qb!"" "'  
+  ExecWait '"vcredist_x86_2010_sp1.exe" /passive /norestart'  
+
 
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
