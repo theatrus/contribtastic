@@ -3,7 +3,22 @@ import sys
 print "Your platform is",sys.platform
 
 manifest = """
-
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+<assemblyIdentity version="1.0.0.0" processorArchitecture="X86" name="*.*.*" type="win32" />
+<description>*</description>
+<dependency>
+<dependentAssembly>
+<assemblyIdentity type="win32" name="Microsoft.Windows.Common-Controls"
+ version="6.0.0.0" processorArchitecture="X86" publicKeyToken="6595b64144ccf1df" language="*" />
+</dependentAssembly>
+</dependency>
+ <dependency>
+ <dependentAssembly>
+  <assemblyIdentity type="win32" name="Microsoft.VC90.CRT" version="9.0.30729.4148" processorArchitecture="x86" publicKeyToken="1fc8b3b9a1e18e3b" /> 
+  </dependentAssembly>
+  </dependency>
+</assembly>
 """
 
 
@@ -33,14 +48,14 @@ if sys.platform == 'win32' or sys.platform == 'linux2':
                      {"optimize": 2,
                       "compressed" : False,
                       "packages" : ['evec_upload'],
-                      "dll_excludes" : ['powrprof.dll', 'api-ms-win-core-localregistry-l1-1-0.dll', 
+                      "dll_excludes" : ['msvcp90.dll', 'powrprof.dll', 'api-ms-win-core-localregistry-l1-1-0.dll', 
                                         'api-ms-win-core-processthreads-l1-1-0.dll', 'api-ms-win-security-base-l1-1-0.dll']
                       }
                  },
         windows= [ {
                 "script": "src/uploader.py",
-                #"icon_resources": [(1, "images/evec_all.ico")] ,
-                #"other_resources": [(24,1,manifest)]
+                "icon_resources": [(1, "images/evec_all.ico")] ,
+                "other_resources": [(24,1,manifest)]
                 }
             ],
         data_files=["images/evec_all.ico"]

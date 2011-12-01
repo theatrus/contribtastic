@@ -310,8 +310,9 @@ class EVEc_Upload(wx.App):
         if len(sys.argv) > 1 and sys.argv[1] == "-hide":
             show = False
 
+        print "Startup config: ",config.config_obj
         if 'hide' in config:
-            show = config['hide']
+            show = not config['hide']
 
         frame.Show(show)
 

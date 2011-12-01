@@ -56,8 +56,6 @@ class TaskBarIcon(wx.TaskBarIcon):
         menu.Append(self.TBMENU_RESTORE, "Restore Contribtastic")
         menu.Append(self.TBMENU_CLOSE,   "Hide Contribtastic")
         menu.AppendSeparator()
-        menu.Append(self.TBMENU_REMOVE, "Remove from taskbar")
-        menu.AppendSeparator()
         menu.Append(self.TBMENU_QUIT, "Quit Contribtastic")
 #        menu.Append(self.TBMENU_CHANGE, "Change the TB Icon")
 
@@ -83,6 +81,7 @@ class TaskBarIcon(wx.TaskBarIcon):
             config['hide'] = False
         else:
             config['hide'] = True
+        print "Hide state is now ",config['hide']
 
     def OnTaskBarActivate(self, evt):
         if self.frame.IsIconized():
