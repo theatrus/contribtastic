@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #    EVE-Central.com Contribtastic
-#    Copyright (C) 2005-2010 Yann Ramin
+#    Copyright (C) 2005-2012 Yann Ramin
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -20,11 +20,12 @@ import wx
 import images
 import sys
 
+from evec_upload.config import Config
+
 class TaskBarIcon(wx.TaskBarIcon):
     TBMENU_RESTORE = wx.NewId()
     TBMENU_CLOSE   = wx.NewId()
     TBMENU_QUIT  = wx.NewId()
-    TBMENU_REMOVE  = wx.NewId()
 
     def __init__(self, frame):
         wx.TaskBarIcon.__init__(self)
@@ -39,7 +40,6 @@ class TaskBarIcon(wx.TaskBarIcon):
         self.Bind(wx.EVT_TASKBAR_LEFT_DCLICK, self.OnTaskBarToggle)
         self.Bind(wx.EVT_MENU, self.OnTaskBarActivate, id=self.TBMENU_RESTORE)
         self.Bind(wx.EVT_MENU, self.OnTaskBarClose, id=self.TBMENU_CLOSE)
-        self.Bind(wx.EVT_MENU, self.OnTaskBarRemove, id=self.TBMENU_REMOVE)
         self.Bind(wx.EVT_MENU, self.OnTaskBarQuit, id=self.TBMENU_QUIT)
 
     def __del__(self):
@@ -74,9 +74,15 @@ class TaskBarIcon(wx.TaskBarIcon):
         elif "wxGTK" in wx.PlatformInfo:
             img = img.Scale(22, 22)
         # wxMac can be any size upto 128x128, so leave the source img alone....
-        icon = wx.IconFromBitmap(img.ConvertToBitmap() )
+        icon = wx.IconFromBitmap( img.ConvertToBitmap() )
         return icon
 
+    def record_hidden(self):
+        config = Config()
+        if self.frame.IsShown():
+            config['hide'] = False
+        else:
+            config['hide'] = True
 
     def OnTaskBarActivate(self, evt):
         if self.frame.IsIconized():
@@ -84,6 +90,7 @@ class TaskBarIcon(wx.TaskBarIcon):
         if not self.frame.IsShown():
             self.frame.Show(True)
         self.frame.Raise()
+        self.record_hidden()
 
 
     def OnTaskBarToggle(self, evt):
@@ -94,6 +101,7 @@ class TaskBarIcon(wx.TaskBarIcon):
             self.frame.Raise()
         else:
             self.frame.Show(False)
+        self.record_hidden()
 
 
 
@@ -108,7 +116,3 @@ class TaskBarIcon(wx.TaskBarIcon):
 
     def OnTaskBarChange(self, evt):
         pass
-
-
-    def OnTaskBarRemove(self, evt):
-        self.RemoveIcon()

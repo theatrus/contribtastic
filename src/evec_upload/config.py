@@ -144,6 +144,12 @@ class Config(object):
         Config.LOCK.release()
         return i
 
+    def __contains__(self, key):
+        Config.LOCK.acquire()
+        i = key in self.config_obj
+        Config.LOCK.release()
+        return i
+
     def __setitem__(self, key, value):
         Config.LOCK.acquire()
         ret =  self.config_obj[key] = value

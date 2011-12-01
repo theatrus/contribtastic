@@ -304,16 +304,16 @@ class EVEc_Upload(wx.App):
 
         frame = MainFrame(None, "Contribtastic!")
         self.SetTopWindow(frame)
+        config = Config()
+        show = True
 
+        if len(sys.argv) > 1 and sys.argv[1] == "-hide":
+            show = False
 
-        try:
-            if sys.argv[1] == "-hide":
-                frame.Show(False)
-            else:
-                frame.Show(True)
-        except:
-            frame.Show(True)
+        if 'hide' in config:
+            show = config['hide']
 
+        frame.Show(show)
 
         return True
 
