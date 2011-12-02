@@ -47,7 +47,7 @@
 - (id) init {
 	self = [super init];
 	[self locateCacheDirectory];
-	_lastValidCache = [NSDate distantPast]; // Set to now
+	_lastValidCache = [NSDate date]; // Set to now
 	_uploadQueue = dispatch_queue_create("com.eve-central.upload_queue", NULL);
 	return self;
 }
@@ -64,8 +64,12 @@
 		return;
 	}
 	
+	EveCache::MarketList ml = parser->getList();
+	NSLog(@"Found valid cache file %@ for region %d type %d", name, ml.region(), ml.type());	
 	
-	NSLog(@"Found valid cache file %@", name);
+	const std::vector<EveCache::MarketOrder> buys = ml.getBuyOrders();
+	const std::vector<EveCache::MarketOrder> sells = ml.getSellOrders();
+	
 	
 	
 	delete parser;
@@ -73,7 +77,8 @@
 }
 
 - (void) scan {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void) {
+	// Scan runs in the uploadQueue
+	dispatch_async(_uploadQueue, ^(void) {
 		
 		
 		NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:_cacheDirectory error:nil];
@@ -91,7 +96,6 @@
 				NSLog(@"File %@ is newer than the last scan", file);
 
 				dispatch_async(_uploadQueue, ^(void) { [self scanFile:file]; });
-				// Process file
 			}
 			
 			if ([modDate compare:highestCache] == NSOrderedDescending) {
@@ -101,6 +105,7 @@
 		
 		dispatch_async(dispatch_get_main_queue(), ^(void) { 
 			_lastValidCache = highestCache;
+			// Avoid setting state outside of the main thread
 		});
 	});
 }

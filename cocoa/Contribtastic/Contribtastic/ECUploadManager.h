@@ -15,8 +15,23 @@
 @property dispatch_queue_t uploadQueue;
 
 - (id)init;
+
+/**
+ * Locate a cache directory from a EVE Mac install
+ */
 - (void)locateCacheDirectory;
+
+
+/**
+ * Process a known cache filename for market orders
+ */
 - (void) scanFile:(NSString*) name;
+
+/**
+ * Scan files in the cache directory and schedule uploads.
+ */
 - (void) scan;
+
+- (NSMutableDictionary*) buildPreamble;
 
 @end
