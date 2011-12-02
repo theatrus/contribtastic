@@ -13,5 +13,6 @@
 @property (assign) IBOutlet NSWindow *window;
 @property (assign) IBOutlet NSMenu *menu;
 @property (retain) NSStatusItem *statusItem;
+- (IBAction)onQuit:(id)sender;
 
 @end

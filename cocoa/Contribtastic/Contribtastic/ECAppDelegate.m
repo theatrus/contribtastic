@@ -23,4 +23,7 @@
     [_statusItem setMenu:_menu];
 }
 
+- (IBAction)onQuit:(id)sender {
+    [NSApp performSelector:@selector(terminate:) withObject:nil afterDelay:0.0];
+}
 @end
