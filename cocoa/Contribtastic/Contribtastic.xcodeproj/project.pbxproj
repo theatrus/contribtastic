@@ -17,6 +17,7 @@
 		0D7EF0D014884AAE00C15BCB /* market.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D7EF0C914884AAE00C15BCB /* market.cpp */; };
 		0D7EF0D114884AAE00C15BCB /* parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D7EF0CA14884AAE00C15BCB /* parser.cpp */; };
 		0D7EF0D214884AAE00C15BCB /* reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0D7EF0CB14884AAE00C15BCB /* reader.cpp */; };
+		0DEDA70214889EC100EEDCA6 /* ECUploadManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DEDA70114889EC000EEDCA6 /* ECUploadManager.mm */; };
 		0DF95F12148875CC00A491AD /* icons.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0DF95F11148875CC00A491AD /* icons.icns */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,8 @@
 		0D7EF0C914884AAE00C15BCB /* market.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = market.cpp; sourceTree = "<group>"; };
 		0D7EF0CA14884AAE00C15BCB /* parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = parser.cpp; sourceTree = "<group>"; };
 		0D7EF0CB14884AAE00C15BCB /* reader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = reader.cpp; sourceTree = "<group>"; };
+		0DEDA70014889EC000EEDCA6 /* ECUploadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; path = ECUploadManager.h; sourceTree = "<group>"; };
+		0DEDA70114889EC000EEDCA6 /* ECUploadManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ECUploadManager.mm; sourceTree = "<group>"; };
 		0DF95F11148875CC00A491AD /* icons.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icons.icns; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,6 +104,8 @@
 		0D244E281488493400B456BB /* Contribtastic */ = {
 			isa = PBXGroup;
 			children = (
+				0DEDA70014889EC000EEDCA6 /* ECUploadManager.h */,
+				0DEDA70114889EC000EEDCA6 /* ECUploadManager.mm */,
 				0D244E341488493400B456BB /* ECAppDelegate.h */,
 				0D244E351488493400B456BB /* ECAppDelegate.m */,
 				0D244E371488493500B456BB /* MainMenu.xib */,
@@ -218,6 +223,7 @@
 				0D7EF0D014884AAE00C15BCB /* market.cpp in Sources */,
 				0D7EF0D114884AAE00C15BCB /* parser.cpp in Sources */,
 				0D7EF0D214884AAE00C15BCB /* reader.cpp in Sources */,
+				0DEDA70214889EC100EEDCA6 /* ECUploadManager.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
