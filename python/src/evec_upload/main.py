@@ -16,7 +16,8 @@
 #    along with this program; if not, write to the Free Software
 #    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-from evec_upload.upload import *
+from evec_upload.version import *
+from evec_upload.scanner import *
 from evec_upload.uploader import get_uploader
 from evec_upload.taskbar import *
 import evec_upload.login
@@ -81,7 +82,7 @@ class MainFrame(wx.Frame):
 
 
 
-        self.upload_thread = UploadThread()
+        self.upload_thread = ScannerThread()
         self.upload_thread.start()
 
         def donecb(count, success, this=self):

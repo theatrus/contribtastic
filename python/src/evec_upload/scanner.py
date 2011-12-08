@@ -1,5 +1,5 @@
 #    EVE-Central.com Contribtastic
-#    Copyright (C) 2005-2010 Yann Ramin
+#    Copyright (C) 2005-2012 StackFoundry LLC
 #
 #    This program is free software; you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -31,18 +31,13 @@ import evecache
 from evec_upload.config import Config, documents_path
 
 
-ProgramVersion = 2003
-ProgramVersionNice = "2.0.3"
-CheckVersion = 2003
-
-
-class UploadPayload(object):
+class ScannerPayload(object):
     def __init__(self, path, uploader, donecb):
         self.path = path
         self.uploader = uploader
         self.donecb = donecb
 
-class UploadThread(Thread):
+class ScannerThread(Thread):
     def __init__(self):
         Thread.__init__(self)
         self.setDaemon(True)
@@ -56,35 +51,12 @@ class UploadThread(Thread):
         while True:
             payload = self.queue.get()
             try:
-                upload_data(payload)
+                scan_data(payload)
             except:
                 pass # This is bad, I know.
 
 
 
-class ProtocolVersionMismatch(exceptions.Exception):
-    pass
-
-
-def check_protocol():
-    pc = urllib.urlopen("http://eve-central.com/protocol_version.txt")
-    version = pc.readline().strip()
-    pc.close()
-    if version != "1":
-        raise ProtocolVersionMismatch
-
-
-def check_client():
-    global ProgramVersion
-    cv = urllib.urlopen("http://eve-central.com/client_version.txt")
-    fversion = cv.readline().strip()
-    version = cv.readline().strip()
-    version = int(version)
-    cv.close()
-    if version > ProgramVersion:
-        return fversion
-    else:
-        return True
 
 
 def make_csv_file(orders, region, typeid, timestamp):
@@ -98,7 +70,7 @@ def make_csv_file(orders, region, typeid, timestamp):
 # Local cache of currently seen files
 seen = {}
 
-def upload_data(job):
+def scan_data(job):
 
     dirl = []
     upcount = 0
