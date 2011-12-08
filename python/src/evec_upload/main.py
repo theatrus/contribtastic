@@ -23,7 +23,7 @@ from evec_upload.taskbar import *
 import evec_upload.login
 import evec_upload.options
 
-from evec_upload.config import Config, default_location
+from evec_upload.config import Config
 
 import wx
 import pickle
@@ -82,8 +82,8 @@ class MainFrame(wx.Frame):
 
 
 
-        self.upload_thread = ScannerThread()
-        self.upload_thread.start()
+        self.scanner_thread = ScannerThread()
+        self.scanner_thread.start()
 
         def donecb(count, success, this=self):
             #print "DONE: %i, %s" % (count, success,)
@@ -214,7 +214,7 @@ class MainFrame(wx.Frame):
     def load_infowidgets(self):
         config = Config()
 
-        path = config['evepath'][0]
+        path = ""#config['evepath'][0]
         if path:
             self.pathtext.SetLabel( path)
             self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
@@ -257,7 +257,7 @@ class MainFrame(wx.Frame):
         self.SetStatusText("Uploading...")
 
         job = UploadPayload(config['evepath'][0], self.uploader, self.donecb)
-        self.upload_thread.trigger(job)
+        self.scanner_thread.trigger(job)
 
 
     def OnLocate(self, evt):

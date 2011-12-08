@@ -25,10 +25,96 @@ import stat
 from cStringIO import StringIO
 import time
 
+
+try:
+    from win32com.shell import shell, shellcon
+except:
+    pass
+
+
 from threading import Thread
 from Queue import Queue
 import evecache
-from evec_upload.config import Config, documents_path
+from evec_upload.config import Config
+
+
+
+
+def find_first_path(path, pref = None):
+    dirlist = os.listdir(path)
+
+    if pref is None:
+        return dirlist[0]
+
+    for p in pref:
+        if p in dirlist or unicode(p) in dirlist:
+            return p
+    return dirlist[0]
+
+
+def documents_path():
+    # Platform specific logic for finding the cache folder
+    if sys.platform == 'win32':
+        document_folder = os.path.join( shell.SHGetFolderPath( 0,
+                                                               shellcon.CSIDL_PERSONAL,
+                                                               0, 0 ), 'EVE-Central CSV', )
+    else:
+        document_folder = os.path.abspath('~')
+
+    try:
+        os.makedirs(document_folder)
+    except:
+        pass
+    return document_folder
+
+
+def default_location():
+    """ This function returns all possible cache folders for Tranquility with the highest MachoNet version number """
+    # Platform specific logic for finding the cache folder
+    if sys.platform == 'win32':
+
+        document_folder = "c:/"
+        try:
+            document_folder = os.path.join( shell.SHGetFolderPath( 0,
+                                                                   shellcon.CSIDL_LOCAL_APPDATA,
+                                                                   0, 0 ), 'CCP', 'EVE', )
+        except Exception,e:
+            print e
+            pass
+    elif sys.platform == 'darwin':
+
+        from Carbon import Folder, Folders
+        folderref = Folder.FSFindFolder( Folders.kUserDomain, Folders.kPreferencesFolderType, False )
+        document_folder = os.path.join( folderref.as_pathname(), 'Eve Online Preferences', 'p_drive', 'My Documents', 'EVE', 'logs', 'MarketLogs' )
+    else:
+        document_folder = '' # don't know what the linux client has
+        document_folder = os.path.normpath( document_folder )
+
+    # Now try to find the most relevant cache folder
+
+    print "Starting to scan from ",document_folder
+    rex = re.compile('cache/MachoNet/87\.237\.38\.200/([0-9]+)/CachedMethodCalls$')
+    def walker(arg, dirname, fnames):
+        match = rex.search(dirname.replace('\\', '/'))
+        if not match:
+            return
+        allpaths.append((match.group(1), dirname))
+        #mt = os.path.getmtime(dirname)
+        #if mt > arg['ts']:
+        #    arg['ts'] = mt
+        #    arg['path'] = dirname
+
+    allpaths = []
+
+    os.path.walk(document_folder, walker, allpath)
+    print "All paths: ", allpaths
+    # Max machonet version
+    allversions = [x[0] for x in allpaths]
+    maxversion = max(allversions)
+
+    paths = [x[1] for x in allpaths if x[0] == maxversion]
+
+    return paths
 
 
 class ScannerPayload(object):
