@@ -182,9 +182,7 @@ def scan_data(job):
         if item[-6:] != ".cache":
             continue
         item = os.path.join(job.path, item)
-        print "Stating",item
         statinfo = os.stat(item)
-        print "Stat complete"
 
         if seen.get(item,-1) == statinfo.st_mtime:
             continue
