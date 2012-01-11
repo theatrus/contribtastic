@@ -28,8 +28,8 @@ import threading
 
 class Config(object):
 
-    CONFIG_VERSION = '2.1.0'
-    LOCK = threading.Lock()
+    CONFIG_VERSION = '2.1.0.1'
+    LOCK = threading.RLock()
     CONFIG_OBJ = {}
 
     def __init__(self):
@@ -90,14 +90,11 @@ class Config(object):
 
     def default_data(self):
         self.config_obj.update({ 'version' : Config.CONFIG_VERSION,
-                            'path_set' : False,
-                            'backup' : False,
-                            'upl_maxthreads' : 1,
-                            'upl_scale' : 100,
-
-                            'character_name' : 'Anonymous',
-                            'character_id' : 0,
-                            'last_upload_time' : 0,
+                                 'backup' : False,
+                                 'upl_maxthreads' : 1,
+                                 'upl_scale' : 100,
+                                 'character_name' : 'Anonymous',
+                                 'character_id' : 0,
                             })
 
     def save_config(self):

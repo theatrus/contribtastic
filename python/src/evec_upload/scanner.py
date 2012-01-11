@@ -38,8 +38,6 @@ import evecache
 from evec_upload.config import Config
 
 
-
-
 def find_first_path(path, pref = None):
     dirlist = os.listdir(path)
 
@@ -68,7 +66,7 @@ def documents_path():
     return document_folder
 
 
-def default_location():
+def default_locations():
     """ This function returns all possible cache folders for Tranquility with the highest MachoNet version number """
     # Platform specific logic for finding the cache folder
     if sys.platform == 'win32':
@@ -99,21 +97,17 @@ def default_location():
         if not match:
             return
         allpaths.append((match.group(1), dirname))
-        #mt = os.path.getmtime(dirname)
-        #if mt > arg['ts']:
-        #    arg['ts'] = mt
-        #    arg['path'] = dirname
 
     allpaths = []
 
-    os.path.walk(document_folder, walker, allpath)
+    os.path.walk(document_folder, walker, allpaths)
     print "All paths: ", allpaths
     # Max machonet version
     allversions = [x[0] for x in allpaths]
     maxversion = max(allversions)
 
     paths = [x[1] for x in allpaths if x[0] == maxversion]
-
+    
     return paths
 
 
@@ -142,9 +136,6 @@ class ScannerThread(Thread):
                 pass # This is bad, I know.
 
 
-
-
-
 def make_csv_file(orders, region, typeid, timestamp):
     config = Config()
     filename = os.path.join(documents_path, str(region) + "-" + str(typeid) + ".csv")
@@ -167,14 +158,18 @@ def scan_data(job):
 
     try:
         dirl = os.listdir(job.path)
-    except:
+    except Exception,e:
         if job.donecb:
             self.donecb(count = upcount, success = False)
+        print "Dir scan error at ",e
         return None
 
     config = Config()
-
-    highest_timestamp = config['last_upload_time']
+    highest_timestamp = 0
+    try:
+        highest_timestamp = config['last_upload_time' + job.path]
+    except:
+        pass
     one_hour_ago = time.time() - 15*60 # 15 min ago
     if highest_timestamp < one_hour_ago:
         highest_timestamp = one_hour_ago
@@ -183,13 +178,17 @@ def scan_data(job):
     print "UPLOAD START: TIMESTAMP CHECK IS > ",start_ts
 
     for item in dirl:
+        print item
         if item[-6:] != ".cache":
             continue
         item = os.path.join(job.path, item)
+        print "Stating",item
         statinfo = os.stat(item)
+        print "Stat complete"
 
         if seen.get(item,-1) == statinfo.st_mtime:
             continue
+
         seen[item] = statinfo.st_mtime
 
         if firstrun and statinfo.st_mtime <= start_ts:
@@ -198,7 +197,7 @@ def scan_data(job):
         if statinfo.st_mtime > highest_timestamp:
             highest_timestamp = statinfo.st_mtime
 
-        print item, statinfo.st_mtime, highest_timestamp
+        print "Now scanning",item, statinfo.st_mtime, highest_timestamp
 
         try:
             market_parser = evecache.MarketParser(str(item))
@@ -227,7 +226,7 @@ def scan_data(job):
         except Exception,e:
             print e
 
-    config['last_upload_time'] = highest_timestamp
+    config['last_upload_time' + job.path] = highest_timestamp
 
     if job.donecb:
         job.donecb(count = upcount, success = True)

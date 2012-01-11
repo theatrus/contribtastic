@@ -86,11 +86,10 @@ class MainFrame(wx.Frame):
         self.scanner_thread.start()
 
         def donecb(count, success, this=self):
-            #print "DONE: %i, %s" % (count, success,)
             evt = DoneUploadEvent(count = count, success = success)
             wx.PostEvent(this, evt)
         self.donecb = donecb
-	    
+
         def updcb(typename, success, this=self):
             #print "UPD: %s, %s" % (typename, success,)
             evt = UpdateUploadEvent(typename = typename, success = success)
@@ -137,7 +136,6 @@ class MainFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.OnTimer, id=self.MENU_SCANNOW)
         self.Bind(wx.EVT_MENU, self.OnTimeToClose, id=wx.ID_EXIT)
         self.Bind(wx.EVT_MENU, self.OnAbout, id = self.MENU_ABOUT)
-        self.Bind(wx.EVT_MENU, self.OnLocate, id = self.MENU_LOCATE)
         self.Bind(wx.EVT_CLOSE, self.OnTimeToClose)
 
         # and put the menu on the menubar
@@ -153,7 +151,7 @@ class MainFrame(wx.Frame):
         panel = wx.Panel(self)
 
         self.pathtext = wx.StaticText(panel, -1, "Please wait...")
-        self.pathtext_l = wx.StaticText(panel, -1, "Using folder:  ")
+        self.pathtext_l = wx.StaticText(panel, -1, "Using folder:  Autodetecting folders.")
 
         #self.usertext_l = wx.StaticText(panel, -1, "Character name:  ")
         #self.usertext = wx.StaticText(panel, -1, "...")
@@ -163,7 +161,7 @@ class MainFrame(wx.Frame):
         if config['character_id'] == 0:
             self.uploads = long(0)
         else:
-            self.uploads = get_charuploads(config['character_id'])
+            self.uploads = long(0)
         self.scans = 0
 
 
@@ -196,11 +194,8 @@ class MainFrame(wx.Frame):
 
         sizer.Add(self.motd, 4, wx.ALL|wx.EXPAND, 1)
 
-
-
         panel.SetSizer(sizer)
         panel.Layout()
-
 
         self.timer = wx.Timer(self)
         self.timer.Start(120000)
@@ -211,15 +206,14 @@ class MainFrame(wx.Frame):
 
         self.load_infowidgets()
 
+        self.paths = []
+
     def load_infowidgets(self):
         config = Config()
 
-        path = ""#config['evepath'][0]
-        if path:
-            self.pathtext.SetLabel( path)
-            self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
 
-
+        self.pathtext.SetLabel("")
+        self.uploadtext.SetLabel("Uploads so far: " + `self.uploads`[:-1] + "  Scans so far: " + `self.scans`)
 
     def OnTimeToClose(self, evt):
         """Event handler for the button click."""
@@ -256,23 +250,13 @@ class MainFrame(wx.Frame):
         config = Config()
         self.SetStatusText("Uploading...")
 
-        job = UploadPayload(config['evepath'][0], self.uploader, self.donecb)
-        self.scanner_thread.trigger(job)
+        if not self.paths:
+            self.paths = default_locations()
 
-
-    def OnLocate(self, evt):
-        config = Config()
-        dlg = wx.DirDialog(self, "Please locate the cache folder",
-                           style=wx.DD_DEFAULT_STYLE, )
-
-        if dlg.ShowModal() == wx.ID_OK:
-            print os.path.abspath(dlg.GetPath())
-            config['evepath'][0] = os.path.abspath(dlg.GetPath())
-            config['path_set'] = True
-
-        config.save_config()
-        self.load_infowidgets()
-
+        for path in self.paths:
+            print "Scanning path ",path
+            job = ScannerPayload(path, self.uploader, self.donecb)
+            self.scanner_thread.trigger(job)
 
     def update_motd(self):
         motdf = urllib.urlopen("http://eve-central.com/motd.txt")
@@ -282,22 +266,6 @@ class MainFrame(wx.Frame):
         motdf.close()
 
         self.motd.WriteText(motd)
-
-
-def get_charid(user, passwd):
-    data = urllib.urlencode({'username':user,'password':passwd})
-    cv = urllib.urlopen("http://eve-central.com/datainput.py/userlogin", data)
-    num = cv.readline().strip()
-    cv.close()
-    return long(num)
-
-
-def get_charuploads(userid):
-    data = urllib.urlencode({'userid':userid})
-    cv = urllib.urlopen("http://eve-central.com/datainput.py/usercount", data)
-    num = cv.readline().strip()
-    cv.close()
-    return long(num)
 
 
 class EVEc_Upload(wx.App):
