@@ -123,10 +123,8 @@ class MainFrame(wx.Frame):
         menu.Append(self.MENU_SCANNOW, "S&can now...")
         menu.AppendSeparator()
 
-
         #menu.Append(self.MENU_SETTINGS, "&Settings...")
-        menu.Append(self.MENU_LOCATE, "&Locate cache folder...")
-
+        #menu.Append(self.MENU_LOCATE, "&Locate cache folder...")
 
         menu.Append(wx.ID_EXIT, "E&xit\tAlt-X", "Exit")
 
