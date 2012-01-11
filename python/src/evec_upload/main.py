@@ -31,7 +31,7 @@ import os
 import sys
 import images
 import urllib
-
+import time
 
 import wx.lib.newevent
 (UpdateUploadEvent, EVT_UPDATE_UPLOAD) = wx.lib.newevent.NewEvent()
@@ -205,6 +205,7 @@ class MainFrame(wx.Frame):
         self.load_infowidgets()
 
         self.paths = []
+        self.paths_age = time.time()
 
     def load_infowidgets(self):
         config = Config()
@@ -248,8 +249,9 @@ class MainFrame(wx.Frame):
         config = Config()
         self.SetStatusText("Uploading...")
 
-        if not self.paths:
+        if not self.paths or self.paths_age > (time.time() + (60*60*24)):
             self.paths = default_locations()
+            self.paths_age = time.time()
 
         for path in self.paths:
             print "Scanning path ",path
