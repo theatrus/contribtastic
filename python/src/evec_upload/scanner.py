@@ -178,7 +178,6 @@ def scan_data(job):
     print "UPLOAD START: TIMESTAMP CHECK IS > ",start_ts
 
     for item in dirl:
-        print item
         if item[-6:] != ".cache":
             continue
         item = os.path.join(job.path, item)
