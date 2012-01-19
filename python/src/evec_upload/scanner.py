@@ -146,6 +146,7 @@ def make_csv_file(orders, region, typeid, timestamp):
 
 # Local cache of currently seen files
 seen = {}
+firstrun_bydir = []
 
 def scan_data(job):
 
@@ -153,8 +154,9 @@ def scan_data(job):
     upcount = 0
 
     firstrun = 0
-    if not seen:
+    if job.path not in firstrun_bydir:
         firstrun = 1
+        firstrun_bydir.append(job.path)
 
     try:
         dirl = os.listdir(job.path)
@@ -165,11 +167,14 @@ def scan_data(job):
         return None
 
     config = Config()
+
     highest_timestamp = 0
+
     try:
         highest_timestamp = config['last_upload_time' + job.path]
     except:
         pass
+
     one_hour_ago = time.time() - 15*60 # 15 min ago
     if highest_timestamp < one_hour_ago:
         highest_timestamp = one_hour_ago
