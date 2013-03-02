@@ -32,6 +32,4 @@
  */
 - (void) scan;
 
-- (NSMutableDictionary*) buildPreamble;
-
 @end

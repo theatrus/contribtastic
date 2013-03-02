@@ -1,3 +1,6 @@
 [submodule "libevecache"]
 	path = libevecache
 	url = git://gitorious.org/libevecache/libevecache.git
+[submodule "cocoa/SCEvents"]
+	path = cocoa/SCEvents
+	url = https://github.com/mz2/SCEvents
