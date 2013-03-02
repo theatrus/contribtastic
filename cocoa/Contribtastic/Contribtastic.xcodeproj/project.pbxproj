@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		05C2CDF616E2B58A004DBA4B /* SCEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 05C2CDF216E2B58A004DBA4B /* SCEvent.m */; };
+		05C2CDF716E2B58A004DBA4B /* SCEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = 05C2CDF516E2B58A004DBA4B /* SCEvents.m */; };
 		0D244E231488493400B456BB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D244E221488493400B456BB /* Cocoa.framework */; };
 		0D244E2D1488493400B456BB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0D244E2B1488493400B456BB /* InfoPlist.strings */; };
 		0D244E2F1488493400B456BB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D244E2E1488493400B456BB /* main.m */; };
@@ -24,6 +26,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		05C2CDF016E2B58A004DBA4B /* SCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SCConstants.h; path = ../../SCEvents/SCConstants.h; sourceTree = "<group>"; };
+		05C2CDF116E2B58A004DBA4B /* SCEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SCEvent.h; path = ../../SCEvents/SCEvent.h; sourceTree = "<group>"; };
+		05C2CDF216E2B58A004DBA4B /* SCEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SCEvent.m; path = ../../SCEvents/SCEvent.m; sourceTree = "<group>"; };
+		05C2CDF316E2B58A004DBA4B /* SCEventListenerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SCEventListenerProtocol.h; path = ../../SCEvents/SCEventListenerProtocol.h; sourceTree = "<group>"; };
+		05C2CDF416E2B58A004DBA4B /* SCEvents.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SCEvents.h; path = ../../SCEvents/SCEvents.h; sourceTree = "<group>"; };
+		05C2CDF516E2B58A004DBA4B /* SCEvents.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SCEvents.m; path = ../../SCEvents/SCEvents.m; sourceTree = "<group>"; };
 		0D244E1E1488493400B456BB /* Contribtastic.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Contribtastic.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D244E221488493400B456BB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		0D244E251488493400B456BB /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -68,6 +76,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		05C2CDEF16E2B576004DBA4B /* SCEvents */ = {
+			isa = PBXGroup;
+			children = (
+				05C2CDF016E2B58A004DBA4B /* SCConstants.h */,
+				05C2CDF116E2B58A004DBA4B /* SCEvent.h */,
+				05C2CDF216E2B58A004DBA4B /* SCEvent.m */,
+				05C2CDF316E2B58A004DBA4B /* SCEventListenerProtocol.h */,
+				05C2CDF416E2B58A004DBA4B /* SCEvents.h */,
+				05C2CDF516E2B58A004DBA4B /* SCEvents.m */,
+			);
+			name = SCEvents;
+			path = Contribtastic;
+			sourceTree = "<group>";
+		};
 		0D244E131488493300B456BB = {
 			isa = PBXGroup;
 			children = (
@@ -75,6 +97,7 @@
 				0D7EF0BF14884AAE00C15BCB /* evecache */,
 				0D7EF0BD14884AAE00C15BCB /* lib */,
 				0D244E281488493400B456BB /* Contribtastic */,
+				05C2CDEF16E2B576004DBA4B /* SCEvents */,
 				0D244E211488493400B456BB /* Frameworks */,
 				0D244E1F1488493400B456BB /* Products */,
 			);
@@ -236,6 +259,8 @@
 				0DEDA70214889EC100EEDCA6 /* ECUploadManager.mm in Sources */,
 				0DEDA7051488B49600EEDCA6 /* JSONKit.m in Sources */,
 				0DEDA7081488B94D00EEDCA6 /* ECUploadPayload.m in Sources */,
+				05C2CDF616E2B58A004DBA4B /* SCEvent.m in Sources */,
+				05C2CDF716E2B58A004DBA4B /* SCEvents.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
