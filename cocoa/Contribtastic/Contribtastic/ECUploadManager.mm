@@ -8,12 +8,18 @@
 
 #import "ECUploadManager.h"
 #include "evecache/market.hpp"
+#import "SCEvents.h"
+
+@interface ECUploadManager () <SCEventListenerProtocol>
+@property(nonatomic,retain) SCEvents *fsWatcher;
+@end
 
 @implementation ECUploadManager
 
 @synthesize cacheDirectory = _cacheDirectory;
 @synthesize lastValidCache = _lastValidCache;
 @synthesize uploadQueue = _uploadQueue;
+@synthesize fsWatcher = _fsWatcher;
 
 - (void) locateCacheDirectory {
 	
@@ -45,10 +51,22 @@
 }
 
 - (id) init {
-	self = [super init];
+	if(!(self = [super init]))
+        return nil;
+    
 	[self locateCacheDirectory];
 	_lastValidCache = [NSDate date]; // Set to now
 	_uploadQueue = dispatch_queue_create("com.eve-central.upload_queue", NULL);
+    
+    // Watch for updates to the cache directory, and automatically do a scan after a change
+    // has happened in it
+    _fsWatcher = [SCEvents new];
+    [_fsWatcher setDelegate:self];
+    [_fsWatcher startWatchingPaths:[NSArray arrayWithObject:_cacheDirectory]];
+    
+    // Do an initial scan
+    [self scan];
+    
 	return self;
 }
 
@@ -108,6 +126,13 @@
 			// Avoid setting state outside of the main thread
 		});
 	});
+}
+
+- (void)pathWatcher:(SCEvents *)pathWatcher eventOccurred:(SCEvent *)event
+{
+    // Coalesce multiple file system events, in case a lot of changes are happening
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(scan) object:nil];
+    [self performSelector:@selector(scan) withObject:nil afterDelay:0.5];
 }
 
 
