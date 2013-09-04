@@ -122,7 +122,7 @@ class UploaderThread(Thread):
 class UploaderEC(UploaderThread):
     def __init__(self, queue=None, donecb=None, identity=0):
         UploaderThread.__init__(self, queue=queue, donecb=donecb, identity=identity)
-        self.host = "eve-central.com"
+        self.host = "api.eve-central.com"
         self.name = "EC"
 
     def do(self, orders, regionid, typeid, timestamp,):
@@ -155,11 +155,13 @@ class UploaderEC(UploaderThread):
                       "/datainput.py/inputdata",
                       submitdata,
                       { 'Content-Type': 'application/x-www-form-urlencoded',
-                        'Host': 'eve-central.com',
+                        'Host': 'api.eve-central.com',
                         } )
         response = conn.getresponse()
         success = ( response.status == 200 )
-
+        print "Response complete"
+        print response.status
+        print response.reason
         if not success:
             print response.status, response.reason
             print response.read()
