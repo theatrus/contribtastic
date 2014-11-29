@@ -1,3 +1,15 @@
+    ==========================================
+         = THIS LIBRARY IS DEPRECATED =
+    ==========================================
+    
+    With the advent of the new EVE CREST APIs the market cache will be
+    removed from the EVE client. As such, there is little point in
+    reading the game data from the reverse engineered cache scraper.
+    
+    ==========================================
+         = THIS LIBRARY IS DEPRECATED =
+    ==========================================
+
 Contribtastic
 =============
 
